@@ -1,5 +1,5 @@
-import { motion } from "framer-motion";
 import { wedding } from "@/data/wedding";
+import { motion } from "framer-motion";
 import { Divider } from "./Divider";
 
 const Card = ({ title, name, parents, place, delay = 0 }: { title: string; name: string; parents: string; place: string; delay?: number }) => (
@@ -8,8 +8,9 @@ const Card = ({ title, name, parents, place, delay = 0 }: { title: string; name:
     viewport={{ once: true }} transition={{ duration: 1, delay }}
     className="text-center px-6"
   >
-    <p className="font-display text-xs tracking-[0.4em] uppercase text-[hsl(var(--gold-deep))] mb-4">{title}</p>
     <h3 className="font-serif-elegant text-5xl text-[hsl(var(--maroon))] gradient-gold-text">{name}</h3>
+    <p className="font-display text-xs tracking-[0.4em] uppercase text-[hsl(var(--gold-deep))] mb-4">{title}</p>
+
     <div className="ornate-divider w-32 mx-auto my-4" />
     <p className="font-serif-elegant text-lg text-[hsl(var(--maroon))]">{parents}</p>
     <p className="font-serif-elegant italic text-sm text-[hsl(var(--maroon)/0.7)] mt-1">{place}</p>

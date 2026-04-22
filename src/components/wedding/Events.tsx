@@ -30,7 +30,20 @@ export const Events = () => (
               <div>
                 <h3 className="font-serif-elegant text-3xl text-[hsl(var(--maroon))]">{e.name}</h3>
                 <div className="ornate-divider w-20 my-3" />
-                <p className="font-serif-elegant italic text-[hsl(var(--gold-deep))]">{e.location}</p>
+                <div className="flex items-center gap-3">
+                  <p className="font-serif-elegant italic text-[hsl(var(--gold-deep))]">{e.location}</p>
+                  {e.mapLink && (
+                    <a 
+                      href={e.mapLink} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="p-1.5 rounded-full bg-[hsl(var(--gold-deep)/0.1)] text-[hsl(var(--gold-deep))] hover:bg-[hsl(var(--gold-deep)/0.2)] hover:text-[hsl(var(--maroon))] transition-all duration-300"
+                      title="View on Map"
+                    >
+                      <MapPin size={18} />
+                    </a>
+                  )}
+                </div>
               </div>
               <div className="flex sm:flex-col gap-4 sm:gap-2 sm:text-right text-sm text-[hsl(var(--maroon)/0.85)]">
                 <div className="flex items-center gap-2 sm:justify-end">
