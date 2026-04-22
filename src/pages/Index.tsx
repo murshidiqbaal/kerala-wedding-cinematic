@@ -1,16 +1,41 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import { AnimatePresence } from "framer-motion";
+import { OpeningAnimation } from "@/components/wedding/OpeningAnimation";
+import { Hero } from "@/components/wedding/Hero";
+import { Countdown } from "@/components/wedding/Countdown";
+import { LoveStory } from "@/components/wedding/LoveStory";
+import { Gallery } from "@/components/wedding/Gallery";
+import { Events } from "@/components/wedding/Events";
+import { Venue } from "@/components/wedding/Venue";
+import { Family } from "@/components/wedding/Family";
+import { RSVP } from "@/components/wedding/RSVP";
+import { Closing } from "@/components/wedding/Closing";
+import { MusicButton } from "@/components/wedding/MusicButton";
+import { WhatsAppButton } from "@/components/wedding/WhatsAppButton";
 
-// IMPORTANT: Fully REPLACE this with your own code
-const PlaceholderIndex = () => {
-  // PLACEHOLDER: Replace this entire return statement with the user's app.
-  // The inline background color is intentionally not part of the design system.
+const Index = () => {
+  const [opened, setOpened] = useState(false);
+
   return (
-    <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: '#fcfbf8' }}>
-      <img data-lovable-blank-page-placeholder="REMOVE_THIS" src="/placeholder.svg" alt="Your app will live here!" />
-    </div>
+    <main className="bg-background overflow-x-hidden">
+      <AnimatePresence>
+        {!opened && <OpeningAnimation onComplete={() => setOpened(true)} />}
+      </AnimatePresence>
+
+      <Hero />
+      <Countdown />
+      <LoveStory />
+      <Gallery />
+      <Events />
+      <Venue />
+      <Family />
+      <RSVP />
+      <Closing />
+
+      <MusicButton />
+      <WhatsAppButton />
+    </main>
   );
 };
-
-const Index = PlaceholderIndex;
 
 export default Index;
