@@ -1,4 +1,4 @@
-import divider from "@/assets/divider.png";
+import divider from "@/assets/optimized/divider.webp";
 import { motion } from "framer-motion";
 
 export const Divider = ({ light = false }: { light?: boolean }) => (

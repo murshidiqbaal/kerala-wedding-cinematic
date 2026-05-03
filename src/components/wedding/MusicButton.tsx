@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Music, VolumeX } from "lucide-react";
+import bgMusic from "@/assets/optimized/bg_music.mp3";
 
 export const MusicButton = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playing, setPlaying] = useState(false);
 
   useEffect(() => {
-    audioRef.current = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_5d3b8a5c08.mp3?filename=indian-classical-meditation-7613.mp3");
+    audioRef.current = new Audio(bgMusic);
     audioRef.current.loop = true;
     audioRef.current.volume = 0.4;
     return () => { audioRef.current?.pause(); };

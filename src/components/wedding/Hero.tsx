@@ -1,19 +1,24 @@
-import { motion } from "framer-motion";
+import coupleImg from "@/assets/optimized/couple-hero.webp";
 import { wedding } from "@/data/wedding";
-import coupleImg from "@/assets/couple-hero.jpg";
+import { motion } from "framer-motion";
 import { Divider } from "./Divider";
 
 export const Hero = () => {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden gradient-royal">
-      <div
-        className="absolute inset-0 opacity-25 bg-cover bg-center"
-        style={{ backgroundImage: `url(${coupleImg})` }}
-      />
-      <div className="absolute inset-0 bg-gradient-to-b from-[hsl(var(--maroon-deep))] via-transparent to-[hsl(var(--maroon-deep))]" />
-      <div className="absolute inset-0" style={{ background: "var(--gradient-divine)" }} />
+      {/* Background Image with Blur */}
+      <div className="absolute inset-0 z-0">
+        <div 
+          className="w-full h-full bg-cover bg-center blur-[4px] scale-110 opacity-70"
+          style={{ backgroundImage: `url(${coupleImg})` }}
+        />
+        {/* Overlays to blend the image with the theme - slightly darker for better text pop */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[hsl(var(--maroon-deep))] via-[hsl(var(--maroon-deep))/0.4] to-[hsl(var(--maroon-deep))]" />
+        <div className="absolute inset-0" style={{ background: "radial-gradient(circle at center, transparent 0%, hsl(var(--maroon-deep)) 100%)", opacity: 0.8 }} />
+      </div>
 
-      <div className="relative z-10 text-center px-6 max-w-3xl">
+      {/* Hero Text Content */}
+      <div className="relative z-10 text-center px-6 max-w-3xl flex flex-col items-center">
         <motion.p
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.2 }}
@@ -26,7 +31,7 @@ export const Hero = () => {
           initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.5, delay: 0.3 }}
           className="font-serif-elegant text-6xl sm:text-8xl md:text-9xl gradient-gold-text leading-none"
-          style={{ textShadow: "0 0 40px hsl(46 80% 60% / 0.4)" }}
+          style={{ textShadow: "0 0 50px hsl(46 80% 60% / 0.6), 0 0 100px hsl(0 0% 0% / 0.4)" }}
         >
           {wedding.bride}
         </motion.h1>
@@ -43,7 +48,7 @@ export const Hero = () => {
           initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.5, delay: 1.2 }}
           className="font-serif-elegant text-6xl sm:text-8xl md:text-9xl gradient-gold-text leading-none"
-          style={{ textShadow: "0 0 40px hsl(46 80% 60% / 0.4)" }}
+          style={{ textShadow: "0 0 50px hsl(46 80% 60% / 0.6), 0 0 100px hsl(0 0% 0% / 0.4)" }}
         >
           {wedding.groom}
         </motion.h1>
@@ -61,7 +66,7 @@ export const Hero = () => {
         <motion.p
           initial={{ opacity: 0 }} animate={{ opacity: 1 }}
           transition={{ duration: 1.2, delay: 2.1 }}
-          className="font-serif-elegant italic text-[hsl(39_60%_96%/0.85)] text-base sm:text-lg mt-4"
+          className="font-serif-elegant italic text-[hsl(39_60%_96%/0.95)] text-base sm:text-lg mt-4"
         >
           "{wedding.tagline}"
         </motion.p>
@@ -71,7 +76,7 @@ export const Hero = () => {
       <motion.div
         initial={{ opacity: 0 }} animate={{ opacity: 1 }}
         transition={{ delay: 2.8, duration: 1 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 text-[hsl(46_80%_70%)] flex flex-col items-center gap-2"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 text-[hsl(46_80%_70%)] flex flex-col items-center gap-2 z-10"
       >
         <span className="font-display text-[10px] tracking-[0.4em] uppercase">Scroll</span>
         <motion.div
