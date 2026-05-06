@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
 import { AnimatePresence } from "framer-motion";
 import Lenis from "lenis";
+import { AmbientBackground } from "@/components/wedding/AmbientBackground";
 import { OpeningAnimation } from "@/components/wedding/OpeningAnimation";
 import { Hero } from "@/components/wedding/Hero";
 import { Countdown } from "@/components/wedding/Countdown";
 import { LoveStory } from "@/components/wedding/LoveStory";
+import { Signature } from "@/components/wedding/Signature";
 import { Gallery } from "@/components/wedding/Gallery";
+import { VideoSection } from "@/components/wedding/VideoSection";
 import { Events } from "@/components/wedding/Events";
 import { Venue } from "@/components/wedding/Venue";
 import { Family } from "@/components/wedding/Family";
@@ -41,7 +44,8 @@ const Index = () => {
   }, []);
 
   return (
-    <main className="bg-background overflow-x-hidden">
+    <main className="bg-background overflow-x-hidden relative">
+      <AmbientBackground />
       <AnimatePresence>
         {!opened && <OpeningAnimation onComplete={() => setOpened(true)} />}
       </AnimatePresence>
@@ -49,7 +53,9 @@ const Index = () => {
       <Hero />
       <Countdown />
       <LoveStory />
+      <Signature />
       <Gallery />
+      <VideoSection />
       <Events />
       <Venue />
       <Family />

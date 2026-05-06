@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;500;600&family=Great+Vibes&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,50 +6,50 @@
 
 @layer base {
   :root {
-    /* Modern Luxury Palette */
-    --background: 40 33% 98%;          /* #FAF9F6 Soft Ivory */
-    --foreground: 0 0% 10%;            /* #1A1A1A Charcoal */
+    /* Light Blue and White Luxury Palette */
+    --background: 0 0% 100%;           /* #FFFFFF Pure White */
+    --foreground: 220 30% 20%;         /* Deep Slate Blue for text */
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 10%;
+    --card-foreground: 220 30% 20%;
 
-    --popover: 40 33% 98%;
-    --popover-foreground: 0 0% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 30% 20%;
 
-    --primary: 40 45% 59%;             /* #C6A769 Matte Gold */
-    --primary-foreground: 0 0% 98%;
+    --primary: 210 60% 70%;            /* Light Blue (replacing matte gold) */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 40%;             /* #666666 Soft Grey */
-    --secondary-foreground: 40 33% 98%;
+    --secondary: 215 15% 60%;          /* Soft Blue-Grey */
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 40 20% 94%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 210 20% 96%;              /* Very Light Blue-Grey */
+    --muted-foreground: 215 15% 50%;
 
-    --accent: 180 25% 25%;             /* #2F4F4F Muted Green */
-    --accent-foreground: 40 33% 98%;
+    --accent: 210 60% 70%;             /* Light Blue */
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 0 0% 88%;
-    --input: 0 0% 88%;
-    --ring: 40 45% 59%;
+    --border: 210 20% 90%;
+    --input: 210 20% 90%;
+    --ring: 210 60% 70%;
 
-    --radius: 0rem; /* Minimal sharp edges or very small radius */
+    --radius: 0rem; 
 
-    /* Custom tokens */
-    --matte-gold: 40 45% 59%;
-    --charcoal: 0 0% 10%;
-    --soft-grey: 0 0% 40%;
-    --ivory: 40 33% 98%;
+    /* Custom tokens mapped to Light Blue/White */
+    --matte-gold: 210 60% 70%;         /* Now a Light Blue */
+    --charcoal: 220 30% 20%;           /* Deep Slate Blue */
+    --soft-grey: 215 15% 60%;
+    --ivory: 0 0% 100%;                /* White */
   }
 
   .dark {
-    --background: 0 0% 7%;
-    --foreground: 40 33% 98%;
-    --card: 0 0% 10%;
-    --card-foreground: 40 33% 98%;
-    --border: 0 0% 15%;
+    --background: 220 30% 10%;
+    --foreground: 0 0% 100%;
+    --card: 220 30% 15%;
+    --card-foreground: 0 0% 100%;
+    --border: 220 30% 20%;
   }
 }
 

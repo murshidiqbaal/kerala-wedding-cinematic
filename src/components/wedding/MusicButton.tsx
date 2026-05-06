@@ -11,14 +11,39 @@ export const MusicButton = () => {
     audioRef.current = new Audio(bgMusic);
     audioRef.current.loop = true;
     audioRef.current.volume = 0.4;
+    
+    // Attempt auto-play immediately
+    audioRef.current.play().then(() => {
+      setPlaying(true);
+    }).catch(() => {
+      // If blocked, wait for first user interaction
+      const playOnInteract = () => {
+        if (!audioRef.current) return;
+        audioRef.current.play().then(() => {
+          setPlaying(true);
+          // Remove listeners once playing
+          ["click", "scroll", "touchstart"].forEach(event => 
+            document.removeEventListener(event, playOnInteract)
+          );
+        }).catch(() => {});
+      };
+
+      ["click", "scroll", "touchstart"].forEach(event => 
+        document.addEventListener(event, playOnInteract, { once: true })
+      );
+    });
+
     return () => { audioRef.current?.pause(); };
   }, []);
 
   const toggle = () => {
     if (!audioRef.current) return;
-    if (playing) audioRef.current.pause();
-    else audioRef.current.play().catch(() => {});
-    setPlaying(!playing);
+    if (playing) {
+      audioRef.current.pause();
+      setPlaying(false);
+    } else {
+      audioRef.current.play().then(() => setPlaying(true)).catch(() => {});
+    }
   };
 
   return (

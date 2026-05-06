@@ -14,7 +14,10 @@ export const wedding = {
   tagline: "Two souls, one sacred journey",
   whatsappNumber: "917306352194",
   story: [
-    { year: "2026", title: "Wedding", text: "The sacred union before the holy fire.", image: gallery1 },
+    { year: "2021", title: "First Glance", text: "Where two paths crossed and a beautiful friendship began.", image: wa1 },
+    { year: "2023", title: "The Promise", text: "A promise made under the stars to hold each other forever.", image: wa4 },
+    { year: "2025", title: "The Journey", text: "Countless memories, travels, and building our world together.", image: wa5 },
+    { year: "2026", title: "The Wedding", text: "The sacred union before the holy fire.", image: gallery1 },
   ],
   gallery: [gallery1, gallery1b, wa1, wa2, wa3, wa4, wa5],
   events: [
