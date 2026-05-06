@@ -406,26 +406,27 @@ export const OpeningAnimation = ({ onComplete }: Props) => {
                 }}
               >
                 {/* Envelope with open flap + card emerging */}
-                <div style={{ position: "relative", width: envelopeW, marginBottom: -40 }}>
+                <div style={{ position: "relative", width: envelopeW, height: 480 }}>
 
                   {/* Card sliding out */}
                   <motion.div
-                    initial={{ y: 80, opacity: 0 }}
+                    initial={{ y: 0, opacity: 0 }}
                     animate={{
-                      y: stage === "flap-open" ? 40 :
-                        stage === "card-rising" ? -160 :
-                          stage === "card-full" || stage === "enter-ready" ? -220 : 40,
-                      opacity: stage === "flap-open" ? 0.3 : 1,
+                      y: stage === "flap-open" ? -40 :
+                        stage === "card-rising" ? -180 :
+                          stage === "card-full" || stage === "enter-ready" ? -240 : 0,
+                      opacity: stage === "flap-open" ? 0.35 : 1,
                     }}
                     transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
                     style={{
-                      position: "relative",
+                      position: "absolute",
+                      bottom: 0,
+                      left: 12,
                       zIndex: 5,
                       background: "#ffffff",
                       border: "0.5px solid rgba(147,197,253,0.5)",
                       borderRadius: 2,
                       width: envelopeW - 24,
-                      marginLeft: 12,
                       paddingBottom: 24,
                       boxShadow: "0 8px 40px rgba(0,0,0,0.5)",
                     }}
@@ -493,7 +494,9 @@ export const OpeningAnimation = ({ onComplete }: Props) => {
 
                   {/* Envelope body (stays behind) */}
                   <div style={{
-                    position: "relative",
+                    position: "absolute",
+                    bottom: 0,
+                    left: 0,
                     width: envelopeW,
                     height: envelopeH,
                     zIndex: 10,
