@@ -1,7 +1,11 @@
 import { motion } from "framer-motion";
 import { wedding } from "@/data/wedding";
+import { Pencil } from "lucide-react";
 
 export const Signature = () => {
+  const brideName = wedding.bride.charAt(0).toUpperCase() + wedding.bride.slice(1);
+  const fullName = `${wedding.groom} & ${brideName}`;
+
   return (
     <section className="py-32 px-6 bg-background flex flex-col items-center justify-center relative overflow-hidden">
       {/* Decorative subtle background circle */}
@@ -19,16 +23,53 @@ export const Signature = () => {
         </p>
 
         {/* Signature Animation */}
-        <div className="relative">
+        <div className="relative inline-block">
+          {/* Pencil Icon Animation */}
+          <motion.div
+            initial={{ left: "0%", opacity: 0 }}
+            whileInView={{ 
+              left: ["0%", "100%"], 
+              opacity: [0, 1, 1, 0] 
+            }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ 
+              duration: 4, 
+              ease: "easeInOut", 
+              delay: 0.5,
+              opacity: { times: [0, 0.1, 0.9, 1] }
+            }}
+            className="absolute z-20 -top-4 md:-top-8 pointer-events-none"
+            style={{ translateX: "-50%" }}
+          >
+            <motion.div
+              animate={{ 
+                rotate: [15, 25, 15, 30, 15],
+                y: [0, -1, 0, -2, 0]
+              }}
+              transition={{ 
+                repeat: Infinity, 
+                duration: 0.3, 
+                ease: "linear" 
+              }}
+            >
+              <Pencil className="w-6 h-6 md:w-10 md:h-10 text-luxury-gold/80 transform -scale-x-100" />
+            </motion.div>
+          </motion.div>
+
+          {/* Text Reveal */}
           <motion.div
             initial={{ clipPath: "inset(0 100% 0 0)" }}
             whileInView={{ clipPath: "inset(0 0% 0 0)" }}
             viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 3, ease: "easeInOut", delay: 0.5 }}
-            className="text-5xl md:text-8xl lg:text-9xl text-luxury-gold drop-shadow-sm"
-            style={{ fontFamily: "'Great Vibes', cursive", paddingRight: "0.2em" }}
+            transition={{ duration: 4, ease: "easeInOut", delay: 0.5 }}
+            className="text-6xl md:text-9xl lg:text-[10rem] text-luxury-gold drop-shadow-sm px-4"
+            style={{ 
+              fontFamily: "'Mrs Saint Delafield', cursive", 
+              whiteSpace: "nowrap",
+              lineHeight: 1.2
+            }}
           >
-            {wedding.groom} & {wedding.bride}
+            {fullName}
           </motion.div>
         </div>
       </motion.div>

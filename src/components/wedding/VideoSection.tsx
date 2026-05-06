@@ -1,7 +1,7 @@
-import { useRef, useState } from "react";
+import coupleImg from "@/assets/optimized/WhatsApp Image 2026-04-22 at 12.53.50 PM.webp";
 import { motion } from "framer-motion";
-import { Play, Pause } from "lucide-react";
-import coupleImg from "@/assets/optimized/couple-hero.webp";
+import { Pause, Play } from "lucide-react";
+import { useRef, useState } from "react";
 
 export const VideoSection = () => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -33,7 +33,7 @@ export const VideoSection = () => {
           {/* Replace with actual wedding video MP4 */}
           {/* <source src="/path/to/your/wedding-video.mp4" type="video/mp4" /> */}
         </video>
-        
+
         {/* Cinematic Gradient Overlay */}
         <div className={`absolute inset-0 bg-gradient-to-t from-background via-black/40 to-background transition-opacity duration-1000 ${isPlaying ? 'opacity-0' : 'opacity-100'}`} />
       </div>
@@ -63,7 +63,7 @@ export const VideoSection = () => {
             ) : (
               <Play className="w-8 h-8 text-white ml-2 group-hover:scale-90 transition-transform" fill="currentColor" />
             )}
-            
+
             {/* Ripple Effect */}
             {!isPlaying && (
               <>

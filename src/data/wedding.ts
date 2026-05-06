@@ -46,12 +46,12 @@ export const wedding = {
   family: {
     bride: {
       title: "Daughter of",
-      parents: "Mr. Ramachandran Nair & Mrs. Lakshmi Nair",
+      parents: "Mr. V V Rajendran & Mrs. Bindhu Rajendran",
       place: "Puthuppadi, Kothamangalam, Kerala",
     },
     groom: {
       title: "Son of",
-      parents: "Mr. Krishnan Menon & Mrs. Parvathy Menon",
+      parents: "Mr. Unni K M & Mrs. Sudha Unni",
       place: "Mulappuram, Thommankuthu, Kerala",
     },
   },
