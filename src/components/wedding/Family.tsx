@@ -9,8 +9,8 @@ const FamilyMember = ({ title, name, parents, place, delay = 0 }: { title: strin
     transition={{ duration: 1.2, delay, ease: [0.22, 1, 0.36, 1] }}
     className="flex flex-col items-center text-center"
   >
-    <p className="font-inter text-[10px] uppercase tracking-[0.4em] text-luxury-gold mb-6">{title}</p>
     <h3 className="font-display text-4xl md:text-6xl text-foreground mb-4">{name}</h3>
+    <p className="font-inter text-[10px] uppercase tracking-[0.4em] text-luxury-gold mb-6">{title}</p>
     <div className="h-[1px] w-8 bg-luxury-gold/20 mb-6" />
     <p className="font-display text-xl text-foreground/80 mb-1">{parents}</p>
     <p className="font-inter text-xs tracking-widest text-soft-grey uppercase">{place}</p>
@@ -33,18 +33,19 @@ export const Family = () => (
       </motion.div>
 
       <div className="grid md:grid-cols-2 gap-24 lg:gap-40">
-        <FamilyMember 
-          title={wedding.family.bride.title} 
-          name={wedding.bride} 
-          parents={wedding.family.bride.parents} 
-          place={wedding.family.bride.place} 
+        <FamilyMember
+          name={wedding.bride}
+          title={wedding.family.bride.title}
+
+          parents={wedding.family.bride.parents}
+          place={wedding.family.bride.place}
         />
-        <FamilyMember 
-          title={wedding.family.groom.title} 
-          name={wedding.groom} 
-          parents={wedding.family.groom.parents} 
-          place={wedding.family.groom.place} 
-          delay={0.2} 
+        <FamilyMember
+          name={wedding.groom}
+          title={wedding.family.groom.title}
+          parents={wedding.family.groom.parents}
+          place={wedding.family.groom.place}
+          delay={0.2}
         />
       </div>
     </div>
