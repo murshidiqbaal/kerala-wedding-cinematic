@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
-import { Music, VolumeX } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Music2, VolumeX } from "lucide-react";
 import bgMusic from "@/assets/optimized/bg_music.mp3";
 
 export const MusicButton = () => {
@@ -22,14 +22,48 @@ export const MusicButton = () => {
   };
 
   return (
-    <motion.button
-      initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 1, scale: 1 }}
-      transition={{ delay: 1, type: "spring" }}
-      onClick={toggle}
-      className="fixed bottom-6 left-6 z-40 w-12 h-12 rounded-full bg-[hsl(var(--maroon-deep))] gold-border text-[hsl(var(--gold))] flex items-center justify-center shadow-gold hover:scale-110 transition-transform"
-      aria-label="Toggle music"
+    <motion.div
+      initial={{ opacity: 0, scale: 0.8 }} 
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay: 2, duration: 1, ease: [0.22, 1, 0.36, 1] }}
+      className="fixed bottom-8 right-8 z-[60]"
     >
-      {playing ? <Music size={18} className="animate-pulse" /> : <VolumeX size={18} />}
-    </motion.button>
+      <button
+        onClick={toggle}
+        className="relative w-14 h-14 bg-foreground text-background flex items-center justify-center luxury-shadow hover:scale-105 active:scale-95 transition-all duration-300 group"
+        aria-label="Toggle music"
+      >
+        <AnimatePresence mode="wait">
+          {playing ? (
+            <motion.div
+              key="music"
+              initial={{ opacity: 0, rotate: -45 }}
+              animate={{ opacity: 1, rotate: 0 }}
+              exit={{ opacity: 0, rotate: 45 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Music2 size={18} strokeWidth={1.5} className="text-luxury-gold" />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="mute"
+              initial={{ opacity: 0, rotate: -45 }}
+              animate={{ opacity: 1, rotate: 0 }}
+              exit={{ opacity: 0, rotate: 45 }}
+              transition={{ duration: 0.3 }}
+            >
+              <VolumeX size={18} strokeWidth={1.5} className="text-background/50" />
+            </motion.div>
+          )}
+        </AnimatePresence>
+        
+        {/* Animated Rings when playing */}
+        {playing && (
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute inset-0 border border-luxury-gold/50 animate-ping opacity-20" />
+          </div>
+        )}
+      </button>
+    </motion.div>
   );
 };

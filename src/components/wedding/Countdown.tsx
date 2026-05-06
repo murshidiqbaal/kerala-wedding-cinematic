@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { wedding } from "@/data/wedding";
-import { Divider } from "./Divider";
 
 const calc = (target: Date) => {
   const diff = Math.max(0, target.getTime() - Date.now());
@@ -30,29 +29,35 @@ export const Countdown = () => {
   ];
 
   return (
-    <section className="py-20 px-6 gradient-royal text-[hsl(39_60%_96%)] relative overflow-hidden">
-      <div className="absolute inset-0" style={{ background: "var(--gradient-divine)" }} />
-      <div className="relative max-w-4xl mx-auto text-center">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }} transition={{ duration: 1 }}
-          className="font-serif-elegant text-4xl sm:text-5xl gradient-gold-text mb-2"
+    <section className="section-spacing px-6 bg-background">
+      <div className="max-w-4xl mx-auto text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+          className="mb-16"
         >
-          Counting Every Moment
-        </motion.h2>
-        <Divider light />
-        <div className="grid grid-cols-4 gap-2 sm:gap-6 mt-8">
+          <p className="font-inter text-[10px] md:text-xs uppercase tracking-[0.5em] text-luxury-gold mb-4">The Countdown</p>
+          <h2 className="font-display text-4xl md:text-6xl text-foreground">Until We Say I Do</h2>
+          <div className="h-[1px] w-12 bg-luxury-gold/30 mx-auto mt-6" />
+        </motion.div>
+
+        <div className="flex flex-wrap justify-center gap-8 md:gap-20">
           {items.map((item, i) => (
             <motion.div
               key={item.label}
-              initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }} transition={{ delay: i * 0.15, duration: 0.8 }}
-              className="gold-border bg-[hsl(var(--maroon-deep)/0.6)] backdrop-blur-sm rounded-lg p-3 sm:p-6"
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
+              className="flex flex-col items-center"
             >
-              <div className="font-serif-elegant text-3xl sm:text-6xl gradient-gold-text leading-none tabular-nums">
+              <div className="font-display text-5xl md:text-8xl text-foreground tabular-nums leading-none">
                 {String(item.value).padStart(2, "0")}
               </div>
-              <div className="font-display text-[10px] sm:text-xs tracking-[0.3em] uppercase mt-2 text-[hsl(46_80%_70%)]">
+              <div className="h-[1px] w-8 bg-luxury-gold/20 my-4" />
+              <div className="font-inter text-[10px] md:text-xs uppercase tracking-[0.3em] text-luxury-gold/80">
                 {item.label}
               </div>
             </motion.div>

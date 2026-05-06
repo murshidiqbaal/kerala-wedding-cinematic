@@ -9,7 +9,7 @@ import wa5 from "@/assets/optimized/WhatsApp Image 2026-04-22 at 12.53.51 PM.web
 export const wedding = {
   bride: "Anjana",
   groom: "Rohith",
-  date: "2026-07-07T11:00:00",
+  date: "2026-06-07T11:00:00",
   dateLabel: "7th Jun 2026",
   tagline: "Two souls, one sacred journey",
   whatsappNumber: "917306352194",
@@ -44,12 +44,12 @@ export const wedding = {
     bride: {
       title: "Daughter of",
       parents: "Mr. Ramachandran Nair & Mrs. Lakshmi Nair",
-      place: "Trivandrum, Kerala",
+      place: "Puthuppadi, Kothamangalam, Kerala",
     },
     groom: {
       title: "Son of",
       parents: "Mr. Krishnan Menon & Mrs. Parvathy Menon",
-      place: "Kochi, Kerala",
+      place: "Mulappuram, Thommankuthu, Kerala",
     },
   },
 };

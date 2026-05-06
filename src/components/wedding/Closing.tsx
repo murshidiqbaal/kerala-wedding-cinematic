@@ -1,43 +1,42 @@
 import { motion } from "framer-motion";
 import { wedding } from "@/data/wedding";
-import { Divider } from "./Divider";
 
 export const Closing = () => (
-  <section className="relative py-32 px-6 gradient-royal text-[hsl(39_60%_96%)] overflow-hidden">
-    <div className="absolute inset-0" style={{ background: "var(--gradient-divine)" }} />
-    {/* Falling petals */}
-    <div className="absolute inset-0 pointer-events-none overflow-hidden">
-      {Array.from({ length: 18 }).map((_, i) => (
-        <div
-          key={i}
-          className="absolute top-0 w-3 h-3 rounded-full opacity-70 animate-float-petal"
-          style={{
-            left: `${(i * 5.5) % 100}%`,
-            background: `radial-gradient(circle, hsl(${i % 2 === 0 ? "46 80% 65%" : "350 70% 50%"}), transparent)`,
-            animationDuration: `${8 + (i % 5) * 2}s`,
-            animationDelay: `${i * 0.6}s`,
-          }}
-        />
-      ))}
-    </div>
-
+  <section className="relative py-48 px-6 bg-background overflow-hidden">
+    {/* Subtle gradient background */}
+    <div className="absolute inset-0 bg-gradient-to-b from-background via-white to-background" />
+    
     <motion.div
-      initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }} transition={{ duration: 1.5 }}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
       className="relative max-w-2xl mx-auto text-center"
     >
-      <Divider light />
-      <p className="font-serif-elegant italic text-2xl sm:text-3xl text-[hsl(46_80%_70%)] leading-relaxed mt-6">
-        "We await your presence to bless our union"
-      </p>
-      <p className="text-3xl mt-4">❤️</p>
-      <Divider light />
-      <h3 className="font-serif-elegant text-4xl sm:text-5xl gradient-gold-text mt-6">
-        {wedding.bride} <span className="text-[hsl(46_80%_70%)] italic text-2xl">&amp;</span> {wedding.groom}
+      <p className="font-inter text-[10px] uppercase tracking-[0.5em] text-luxury-gold mb-8">Final Word</p>
+      
+      <h2 className="font-display text-4xl md:text-6xl text-foreground mb-12 leading-tight">
+        We look forward to <br /> celebrating with you
+      </h2>
+      
+      <div className="h-[1px] w-12 bg-luxury-gold/30 mx-auto mb-12" />
+
+      <h3 className="font-display text-2xl md:text-3xl text-foreground mb-4">
+        {wedding.groom} <span className="text-luxury-gold italic lowercase text-xl">&</span> {wedding.bride}
       </h3>
-      <p className="font-display text-xs tracking-[0.4em] uppercase text-[hsl(46_80%_70%/0.7)] mt-6">
+      
+      <p className="font-inter text-[10px] uppercase tracking-[0.4em] text-soft-grey">
         {wedding.dateLabel}
       </p>
+
+      {/* Subtle floating element */}
+      <motion.div
+        animate={{ y: [0, -10, 0] }}
+        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+        className="mt-20 text-luxury-gold/30"
+      >
+        ✦
+      </motion.div>
     </motion.div>
   </section>
 );
