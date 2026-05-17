@@ -1,6 +1,6 @@
 import coupleImg from "@/assets/optimized/photo_2026-05-17_16-05-26.webp";
 import { wedding } from "@/data/wedding";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 
 // ── Floating jasmine/flower petal component with depth-of-field ────────────────
@@ -272,30 +272,9 @@ export const Hero = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
 
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  const springCfg = { damping: 55, stiffness: 75 };
-  const smoothX = useSpring(mouseX, springCfg);
-  const smoothY = useSpring(mouseY, springCfg);
-  // Slightly increased parallax offsets for deep 3D sensation
-  const imgX = useTransform(smoothX, [-0.5, 0.5], [-18, 18]);
-  const imgY = useTransform(smoothY, [-0.5, 0.5], [-18, 18]);
-  const textX = useTransform(smoothX, [-0.5, 0.5], [10, -10]);
-  const textY = useTransform(smoothY, [-0.5, 0.5], [6, -6]);
-
   useEffect(() => {
     setMounted(true);
-
-    const onMouse = (e: MouseEvent) => {
-      mouseX.set(e.clientX / window.innerWidth - 0.5);
-      mouseY.set(e.clientY / window.innerHeight - 0.5);
-    };
-
-    window.addEventListener("mousemove", onMouse);
-    return () => {
-      window.removeEventListener("mousemove", onMouse);
-    };
-  }, [mouseX, mouseY]);
+  }, []);
 
   // Increased particle count and structured layers
   const flowers = Array.from({ length: 22 }, (_, i) => ({
@@ -350,10 +329,7 @@ export const Hero = () => {
       <ShimmerLine delay={7} y="78%" />
 
       {/* ── IMAGE LAYER WITH CINEMATIC KEN BURNS ── */}
-      <motion.div
-        style={{ x: imgX, y: imgY }}
-        className="absolute inset-0 z-[2]"
-      >
+      <div className="absolute inset-0 z-[2]">
         <div className="absolute inset-0 overflow-hidden">
           <motion.div
             className="w-full h-full"
@@ -374,7 +350,7 @@ export const Hero = () => {
             />
           </motion.div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Dynamic Lens Flare / Light Leak Overlays */}
       {mounted && <LightLeak />}
@@ -403,7 +379,9 @@ export const Hero = () => {
 
       {/* ── CONTENT LAYER ── */}
       <motion.div
-        style={{ x: textX, y: textY }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.2 }}
         className="relative z-[12] flex flex-col justify-end flex-1 px-7 pb-14 pt-28"
       >
         {/* Eyebrow invite tag */}
