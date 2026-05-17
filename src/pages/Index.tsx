@@ -1,8 +1,11 @@
+import { AdminDashboard } from "@/components/wedding/AdminDashboard";
+import { AdminModal } from "@/components/wedding/AdminModal";
 import { AmbientBackground } from "@/components/wedding/AmbientBackground";
 import { Closing } from "@/components/wedding/Closing";
 import { Countdown } from "@/components/wedding/Countdown";
 import { Events } from "@/components/wedding/Events";
 import { Family } from "@/components/wedding/Family";
+import { FloatingLiveButton } from "@/components/wedding/FloatingLiveButton";
 import { Gallery } from "@/components/wedding/Gallery";
 import { Hero } from "@/components/wedding/Hero";
 import { LoveStory } from "@/components/wedding/LoveStory";
@@ -12,10 +15,6 @@ import { Signature } from "@/components/wedding/Signature";
 import { Venue } from "@/components/wedding/Venue";
 import { VideoSection } from "@/components/wedding/VideoSection";
 import { WhatsAppButton } from "@/components/wedding/WhatsAppButton";
-import { AdminModal } from "@/components/wedding/AdminModal";
-import { AdminDashboard } from "@/components/wedding/AdminDashboard";
-import { LiveMemoriesSection } from "@/components/wedding/LiveMemoriesSection";
-import { FloatingLiveButton } from "@/components/wedding/FloatingLiveButton";
 import { AnimatePresence } from "framer-motion";
 import Lenis from "lenis";
 import { useEffect, useState } from "react";
@@ -55,7 +54,7 @@ const Index = () => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "a") {
         e.preventDefault();
-        
+
         // Double check if token is already present and still valid in local storage
         const savedToken = localStorage.getItem("gdrive_access_token");
         const expiry = localStorage.getItem("gdrive_token_expiry");
@@ -100,9 +99,9 @@ const Index = () => {
       <LoveStory />
       <Signature />
       <Gallery />
-      
+
       {/* ── LIVE MEMORIES PUBLIC SECTION ── */}
-      <LiveMemoriesSection />
+      {/* <LiveMemoriesSection /> */}
 
       <VideoSection />
       <Events />
@@ -113,7 +112,7 @@ const Index = () => {
 
       <MusicButton />
       <WhatsAppButton />
-      
+
       {/* ── LIVE GUEST FLOAT SCROLLER ── */}
       <FloatingLiveButton />
 
@@ -126,9 +125,9 @@ const Index = () => {
 
       <AnimatePresence>
         {showDashboard && (
-          <AdminDashboard 
-            token={gdriveToken} 
-            onLogout={handleLogout} 
+          <AdminDashboard
+            token={gdriveToken}
+            onLogout={handleLogout}
           />
         )}
       </AnimatePresence>
