@@ -291,18 +291,9 @@ export const Hero = () => {
       mouseY.set(e.clientY / window.innerHeight - 0.5);
     };
 
-    const onGyro = (e: DeviceOrientationEvent) => {
-      if (e.gamma !== null && e.beta !== null) {
-        mouseX.set(Math.max(-0.5, Math.min(0.5, e.gamma / 60)));
-        mouseY.set(Math.max(-0.5, Math.min(0.5, (e.beta - 45) / 60)));
-      }
-    };
-
     window.addEventListener("mousemove", onMouse);
-    window.addEventListener("deviceorientation", onGyro);
     return () => {
       window.removeEventListener("mousemove", onMouse);
-      window.removeEventListener("deviceorientation", onGyro);
     };
   }, [mouseX, mouseY]);
 
@@ -367,9 +358,7 @@ export const Hero = () => {
           <motion.div
             className="w-full h-full"
             animate={{
-              scale: [1.04, 1.10, 1.04],
-              x: ["-1.5%", "1.5%", "-1.5%"],
-              y: ["-1%", "1%", "-1%"],
+              scale: [1.02, 1.08, 1.02],
             }}
             transition={{
               duration: 25,
