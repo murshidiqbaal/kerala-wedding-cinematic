@@ -6,13 +6,13 @@ import wa3 from "@/assets/optimized/WhatsApp Image 2026-04-22 at 12.53.50 PM.web
 import wa4 from "@/assets/optimized/WhatsApp Image 2026-04-22 at 12.53.51 PM (1).webp";
 import wa5 from "@/assets/optimized/WhatsApp Image 2026-04-22 at 12.53.51 PM.webp";
 
-import g1 from "@/assets/optimized/photo_2026-05-17_15-59-19 (2).jpg";
-import g2 from "@/assets/optimized/photo_2026-05-17_16-05-26.jpg";
-import g3 from "@/assets/optimized/photo_2026-05-17_16-05-36.jpg";
-import g4 from "@/assets/optimized/photo_2026-05-17_17-22-39.jpg";
-import g5 from "@/assets/optimized/photo_2026-05-17_17-23-02.jpg";
-import g6 from "@/assets/optimized/photo_2026-05-17_17-23-24.jpg";
-import g7 from "@/assets/optimized/photo_2026-05-17_17-23-28.jpg";
+import g1 from "@/assets/optimized/photo_2026-05-17_15-59-19 (2).webp";
+import g2 from "@/assets/optimized/photo_2026-05-17_16-05-26.webp";
+import g3 from "@/assets/optimized/photo_2026-05-17_16-05-36.webp";
+import g4 from "@/assets/optimized/photo_2026-05-17_17-22-39.webp";
+import g5 from "@/assets/optimized/photo_2026-05-17_17-23-02.webp";
+import g6 from "@/assets/optimized/photo_2026-05-17_17-23-24.webp";
+import g7 from "@/assets/optimized/photo_2026-05-17_17-23-28.webp";
 import g8 from "@/assets/optimized/WhatsApp Image 2026-04-22 at 11.15.41 AM.webp";
 import g9 from "@/assets/optimized/WhatsApp Image 2026-04-22 at 9.45.54 AM.webp";
 import g10 from "@/assets/optimized/WhatsApp Image 2026-04-22 at 12.53.48 PM (1).webp";

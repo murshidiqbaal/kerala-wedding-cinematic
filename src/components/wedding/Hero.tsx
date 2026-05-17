@@ -1,4 +1,4 @@
-import coupleImg from "@/assets/optimized/photo_2026-05-17_16-05-26.jpg";
+import coupleImg from "@/assets/optimized/photo_2026-05-17_16-05-26.webp";
 import { wedding } from "@/data/wedding";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
