@@ -1,21 +1,20 @@
-import { useState, useEffect } from "react";
+import { AmbientBackground } from "@/components/wedding/AmbientBackground";
+import { Closing } from "@/components/wedding/Closing";
+import { Countdown } from "@/components/wedding/Countdown";
+import { Events } from "@/components/wedding/Events";
+import { Family } from "@/components/wedding/Family";
+import { Gallery } from "@/components/wedding/Gallery";
+import { Hero } from "@/components/wedding/Hero";
+import { LoveStory } from "@/components/wedding/LoveStory";
+import { MusicButton } from "@/components/wedding/MusicButton";
+import { OpeningAnimation } from "@/components/wedding/OpeningAnimation";
+import { Signature } from "@/components/wedding/Signature";
+import { Venue } from "@/components/wedding/Venue";
+import { VideoSection } from "@/components/wedding/VideoSection";
+import { WhatsAppButton } from "@/components/wedding/WhatsAppButton";
 import { AnimatePresence } from "framer-motion";
 import Lenis from "lenis";
-import { AmbientBackground } from "@/components/wedding/AmbientBackground";
-import { OpeningAnimation } from "@/components/wedding/OpeningAnimation";
-import { Hero } from "@/components/wedding/Hero";
-import { Countdown } from "@/components/wedding/Countdown";
-import { LoveStory } from "@/components/wedding/LoveStory";
-import { Signature } from "@/components/wedding/Signature";
-import { Gallery } from "@/components/wedding/Gallery";
-import { VideoSection } from "@/components/wedding/VideoSection";
-import { Events } from "@/components/wedding/Events";
-import { Venue } from "@/components/wedding/Venue";
-import { Family } from "@/components/wedding/Family";
-import { RSVP } from "@/components/wedding/RSVP";
-import { Closing } from "@/components/wedding/Closing";
-import { MusicButton } from "@/components/wedding/MusicButton";
-import { WhatsAppButton } from "@/components/wedding/WhatsAppButton";
+import { useEffect, useState } from "react";
 
 const Index = () => {
   const [opened, setOpened] = useState(false);
@@ -59,7 +58,7 @@ const Index = () => {
       <Events />
       <Venue />
       <Family />
-      <RSVP />
+      {/* <RSVP /> */}
       <Closing />
 
       <MusicButton />

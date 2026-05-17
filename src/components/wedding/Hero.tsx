@@ -1,57 +1,216 @@
-import coupleImg from "@/assets/optimized/couple-hero.webp";
 import { wedding } from "@/data/wedding";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 
-// ── Floating petal component ──────────────────────────────────────────────────
-const Petal = ({ delay, x, size }: { delay: number; x: number; size: number }) => (
+// ── Floating jasmine/flower petal component with depth-of-field ────────────────
+interface FlowerProps {
+  delay: number;
+  startX: number;
+  size: number;
+  depth: 0 | 1 | 2; // 0 = foreground (close, blurred), 1 = midground, 2 = background (far, tiny)
+}
+
+const Flower = ({ delay, startX, size, depth }: FlowerProps) => {
+  let blur = "blur(0px)";
+  let zIndex = 15;
+  let duration = 14 + Math.random() * 8;
+  let opacity = [0, 0.9, 0.7, 0];
+  let currentSize = size;
+
+  if (depth === 0) {
+    // Foreground - large, blurred, moving fast
+    blur = "blur(5px)";
+    zIndex = 25;
+    duration = 7 + Math.random() * 3;
+    opacity = [0, 0.65, 0.45, 0];
+    currentSize = size * 1.9;
+  } else if (depth === 2) {
+    // Background - small, faint, moving slow, slightly blurred
+    blur = "blur(1.5px)";
+    zIndex = 5;
+    duration = 24 + Math.random() * 10;
+    opacity = [0, 0.35, 0.25, 0];
+    currentSize = size * 0.65;
+  } else {
+    // Midground - crisp, normal speed
+    blur = "blur(0px)";
+    zIndex = 15;
+    duration = 13 + Math.random() * 7;
+    opacity = [0, 0.85, 0.65, 0];
+    currentSize = size;
+  }
+
+  // Create organic swaying breeze motion (horizontal keyframes)
+  const swayOffset = depth === 0 ? 15 : depth === 2 ? 6 : 10;
+  const xKeyframes = [
+    `${startX}%`,
+    `${startX + swayOffset}%`,
+    `${startX - swayOffset}%`,
+    `${startX + swayOffset / 2}%`,
+    `${startX}%`
+  ];
+
+  return (
+    <motion.div
+      className="absolute pointer-events-none"
+      style={{
+        left: 0,
+        top: "-15%",
+        width: currentSize,
+        height: currentSize,
+        zIndex,
+        filter: blur,
+      }}
+      animate={{
+        y: ["0vh", "115vh"],
+        x: xKeyframes,
+        rotateX: [0, 180, 360, 540, 720],
+        rotateY: [0, 360, 720, 1080, 1440],
+        rotateZ: [0, 270, 540, 810, 1080],
+        opacity,
+      }}
+      transition={{
+        duration,
+        delay,
+        repeat: Infinity,
+        ease: "linear",
+      }}
+    >
+      <div className="relative w-full h-full">
+        {/* Render a premium multi-petal Kerala jasmine flower shape */}
+        {[0, 60, 120, 180, 240, 300].map((deg) => (
+          <div
+            key={deg}
+            className="absolute w-[45%] h-[32%] bg-gradient-to-r from-white via-white/80 to-blue-50/40 rounded-full"
+            style={{
+              transform: `rotate(${deg}deg) translateY(-40%) scaleX(0.7)`,
+              border: "0.5px solid rgba(187, 222, 251, 0.4)",
+              boxShadow: "0 0 5px rgba(255, 255, 255, 0.4)",
+              transformOrigin: "bottom center",
+            }}
+          />
+        ))}
+        {/* Golden/Yellow-Blue Soft center pistil */}
+        <div className="absolute inset-[36%] bg-gradient-to-r from-amber-200/90 to-blue-200/80 rounded-full blur-[0.5px]" />
+      </div>
+    </motion.div>
+  );
+};
+
+// ── Bokeh component ──────────────────────────────────────────────────────────
+const Bokeh = ({ delay, x, y, size }: { delay: number; x: number; y: number; size: number }) => (
   <motion.div
-    className="absolute pointer-events-none"
+    className="absolute rounded-full pointer-events-none bg-blue-200/10 blur-[40px]"
     style={{
       left: `${x}%`,
-      top: "-5%",
+      top: `${y}%`,
       width: size,
       height: size,
-      borderRadius: "50% 0 50% 0",
-      background: "radial-gradient(circle at 40% 40%, rgba(212,175,107,0.35), rgba(212,175,107,0.08))",
-      border: "0.5px solid rgba(212,175,107,0.25)",
-      rotate: Math.random() * 45,
     }}
     animate={{
-      y: ["0vh", "110vh"],
-      rotate: [0, 180, 360],
-      opacity: [0, 0.6, 0.4, 0],
-      x: [`${x}%`, `${x + (Math.random() * 10 - 5)}%`],
+      scale: [1, 1.3, 1],
+      opacity: [0.1, 0.35, 0.1],
+      x: ["0%", "5%", "0%"],
+      y: ["0%", "-5%", "0%"],
     }}
     transition={{
-      duration: 10 + Math.random() * 8,
+      duration: 10 + Math.random() * 5,
       delay,
       repeat: Infinity,
-      ease: "linear",
+      ease: "easeInOut",
     }}
   />
+);
+
+// ── Cinematic Lens Flare / Light Leak overlay ──────────────────────────────────
+const LightLeak = () => (
+  <div className="absolute inset-0 overflow-hidden pointer-events-none mix-blend-screen opacity-[0.38] z-[8]">
+    <motion.div
+      className="absolute rounded-full bg-gradient-to-tr from-amber-200/35 via-blue-100/15 to-transparent blur-[120px]"
+      style={{
+        width: "160%",
+        height: "160%",
+        left: "-30%",
+        top: "-30%",
+      }}
+      animate={{
+        rotate: [0, 90, 180, 270, 360],
+        scale: [1, 1.15, 0.92, 1.08, 1],
+        x: ["-4%", "4%", "-1%", "3%", "-4%"],
+        y: ["-4%", "-1%", "4%", "-3%", "-4%"],
+      }}
+      transition={{
+        duration: 35,
+        repeat: Infinity,
+        ease: "easeInOut",
+      }}
+    />
+    <motion.div
+      className="absolute rounded-full bg-gradient-to-br from-pink-100/25 via-orange-50/10 to-transparent blur-[100px]"
+      style={{
+        width: "130%",
+        height: "130%",
+        right: "-15%",
+        bottom: "-15%",
+      }}
+      animate={{
+        rotate: [360, 270, 180, 90, 0],
+        scale: [1, 0.92, 1.12, 0.97, 1],
+        x: ["4%", "-4%", "2%", "-1%", "4%"],
+        y: ["4%", "1%", "-3%", "2%", "4%"],
+      }}
+      transition={{
+        duration: 42,
+        repeat: Infinity,
+        ease: "easeInOut",
+      }}
+    />
+  </div>
 );
 
 // ── Shimmer line component ────────────────────────────────────────────────────
 const ShimmerLine = ({ delay, y }: { delay: number; y: string }) => (
   <motion.div
-    className="absolute left-0 right-0 pointer-events-none"
-    style={{ top: y, height: "0.5px", background: "linear-gradient(90deg, transparent, rgba(212,175,107,0.15), rgba(212,175,107,0.4), rgba(212,175,107,0.15), transparent)" }}
-    animate={{ opacity: [0, 1, 0], scaleX: [0.4, 1, 0.4] }}
-    transition={{ duration: 6, delay, repeat: Infinity, ease: "easeInOut" }}
+    className="absolute left-0 right-0 pointer-events-none z-[9]"
+    style={{ 
+      top: y, 
+      height: "0.5px", 
+      background: "linear-gradient(90deg, transparent, rgba(187, 222, 251, 0.2), rgba(255, 255, 255, 0.75), rgba(187, 222, 251, 0.2), transparent)" 
+    }}
+    animate={{ opacity: [0, 1, 0], scaleX: [0.4, 1.1, 0.4] }}
+    transition={{ duration: 7, delay, repeat: Infinity, ease: "easeInOut" }}
   />
 );
 
-// ── Animated character ────────────────────────────────────────────────────────
+// ── Animated character reveal with 3D dynamics ───────────────────────────────
 const Char = ({ char, index, baseDelay }: { char: string; index: number; baseDelay: number }) => (
   <motion.span
-    style={{ display: "inline-block", whiteSpace: "pre" }}
-    initial={{ opacity: 0, y: 60, rotateX: -90, filter: "blur(8px)" }}
-    animate={{ opacity: 1, y: 0, rotateX: 0, filter: "blur(0px)" }}
+    style={{
+      display: "inline-block",
+      whiteSpace: "pre",
+      transformOrigin: "bottom center",
+      backfaceVisibility: "hidden",
+    }}
+    initial={{
+      opacity: 0,
+      y: 70,
+      scale: 0.75,
+      rotateX: -95,
+      rotateY: 12,
+      filter: "blur(10px)",
+    }}
+    animate={{
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      rotateX: 0,
+      rotateY: 0,
+      filter: "blur(0px)",
+    }}
     transition={{
-      duration: 1.2,
-      delay: baseDelay + index * 0.06,
-      ease: [0.22, 1, 0.36, 1],
+      duration: 1.4,
+      delay: baseDelay + index * 0.05,
+      ease: [0.16, 1, 0.3, 1], // Custom cinematic bezier curve
     }}
   >
     {char}
@@ -65,14 +224,45 @@ const OrbitRing = ({ size, duration, delay, opacity }: { size: number; duration:
     style={{
       width: size,
       height: size,
-      border: `0.5px solid rgba(212,175,107,${opacity})`,
+      border: `1px solid rgba(255, 255, 255, ${opacity})`,
       left: "50%",
       top: "50%",
       marginLeft: -size / 2,
       marginTop: -size / 2,
+      boxShadow: `0 0 20px rgba(187, 222, 251, ${opacity * 2})`,
+      zIndex: 6,
     }}
-    animate={{ scale: [1, 1.04, 1], opacity: [opacity, opacity * 1.6, opacity] }}
+    animate={{ scale: [1, 1.06, 1], opacity: [opacity, opacity * 1.5, opacity] }}
     transition={{ duration, delay, repeat: Infinity, ease: "easeInOut" }}
+  />
+);
+
+// ── Concentric Ripple waves ──────────────────────────────────────────────────
+const RippleRing = ({ size, delay }: { size: number; delay: number }) => (
+  <motion.div
+    className="absolute rounded-full pointer-events-none"
+    style={{
+      width: size,
+      height: size,
+      border: "1.5px solid rgba(187, 222, 251, 0.25)",
+      left: "50%",
+      top: "50%",
+      marginLeft: -size / 2,
+      marginTop: -size / 2,
+      background: "radial-gradient(circle, rgba(227, 242, 253, 0.04) 0%, transparent 70%)",
+      zIndex: 5,
+    }}
+    initial={{ scale: 0.6, opacity: 0 }}
+    animate={{
+      scale: [0.6, 1.25, 1.6],
+      opacity: [0, 0.55, 0],
+    }}
+    transition={{
+      duration: 9,
+      delay,
+      repeat: Infinity,
+      ease: "easeOut",
+    }}
   />
 );
 
@@ -81,16 +271,16 @@ export const Hero = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
 
-  // Parallax on mobile via touch / gyro
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
-  const springCfg = { damping: 60, stiffness: 80 };
+  const springCfg = { damping: 55, stiffness: 75 };
   const smoothX = useSpring(mouseX, springCfg);
   const smoothY = useSpring(mouseY, springCfg);
-  const imgX = useTransform(smoothX, [-0.5, 0.5], [-12, 12]);
-  const imgY = useTransform(smoothY, [-0.5, 0.5], [-12, 12]);
-  const textX = useTransform(smoothX, [-0.5, 0.5], [8, -8]);
-  const textY = useTransform(smoothY, [-0.5, 0.5], [4, -4]);
+  // Slightly increased parallax offsets for deep 3D sensation
+  const imgX = useTransform(smoothX, [-0.5, 0.5], [-18, 18]);
+  const imgY = useTransform(smoothY, [-0.5, 0.5], [-18, 18]);
+  const textX = useTransform(smoothX, [-0.5, 0.5], [10, -10]);
+  const textY = useTransform(smoothY, [-0.5, 0.5], [6, -6]);
 
   useEffect(() => {
     setMounted(true);
@@ -100,7 +290,6 @@ export const Hero = () => {
       mouseY.set(e.clientY / window.innerHeight - 0.5);
     };
 
-    // DeviceOrientation for mobile parallax
     const onGyro = (e: DeviceOrientationEvent) => {
       if (e.gamma !== null && e.beta !== null) {
         mouseX.set(Math.max(-0.5, Math.min(0.5, e.gamma / 60)));
@@ -116,10 +305,19 @@ export const Hero = () => {
     };
   }, [mouseX, mouseY]);
 
-  const petals = Array.from({ length: 14 }, (_, i) => ({
-    delay: i * 1.1,
-    x: 5 + (i / 13) * 90,
-    size: 6 + Math.random() * 10,
+  // Increased particle count and structured layers
+  const flowers = Array.from({ length: 22 }, (_, i) => ({
+    delay: i * 0.7,
+    startX: Math.random() * 100,
+    size: 15 + Math.random() * 18,
+    depth: (i % 3) as 0 | 1 | 2,
+  }));
+
+  const bokehs = Array.from({ length: 8 }, (_, i) => ({
+    delay: i * 1.5,
+    x: Math.random() * 100,
+    y: Math.random() * 100,
+    size: 140 + Math.random() * 200,
   }));
 
   const groomName = wedding.groom;
@@ -129,257 +327,304 @@ export const Hero = () => {
     <section
       ref={containerRef}
       className="relative min-h-[100svh] flex flex-col overflow-hidden"
-      style={{ background: "var(--bg, #0c0a07)" }}
+      style={{ background: "#EDF5FD" }}
     >
-      {/* ── Deep textured background ── */}
+      {/* ── Dreamy Background Gradient ── */}
       <div
-        className="absolute inset-0 pointer-events-none"
+        className="absolute inset-0 pointer-events-none z-[1]"
         style={{
-          background: "radial-gradient(ellipse 120% 80% at 60% 30%, rgba(30,22,10,1) 0%, #080601 100%)",
+          background: "radial-gradient(circle at 30% 25%, #FFFFFF 0%, #E3F2FD 45%, #B3D7F7 100%)",
         }}
       />
 
+      {/* Bokeh Effects */}
+      {mounted && bokehs.map((b, i) => <Bokeh key={i} {...b} />)}
+
       {/* Noise grain overlay */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-[0.035]"
+        className="absolute inset-0 pointer-events-none opacity-[0.02] z-[3]"
         style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
           backgroundSize: "180px",
         }}
       />
 
-      {/* Floating petals */}
-      {mounted && petals.map((p, i) => <Petal key={i} {...p} />)}
+      {/* Floating jasmine flowers (background + foreground parallax layers) */}
+      {mounted && flowers.map((p, i) => <Flower key={i} {...p} />)}
 
       {/* Shimmer lines */}
-      <ShimmerLine delay={0} y="22%" />
-      <ShimmerLine delay={3.5} y="65%" />
-      <ShimmerLine delay={7} y="88%" />
+      <ShimmerLine delay={0} y="15%" />
+      <ShimmerLine delay={3.5} y="48%" />
+      <ShimmerLine delay={7} y="78%" />
 
-      {/* ── IMAGE LAYER (full bleed with parallax) ── */}
+      {/* ── IMAGE LAYER WITH CINEMATIC KEN BURNS ── */}
       <motion.div
         style={{ x: imgX, y: imgY }}
-        className="absolute inset-0"
+        className="absolute inset-0 z-[2]"
       >
-        <div className="absolute inset-0">
-          {/* Ken Burns */}
+        <div className="absolute inset-0 overflow-hidden bg-black">
           <motion.div
             className="w-full h-full"
-            animate={{ scale: [1.06, 1.14, 1.06] }}
-            transition={{ duration: 28, repeat: Infinity, ease: "linear" }}
+            animate={{
+              scale: [1.04, 1.10, 1.04],
+              x: ["-1.5%", "1.5%", "-1.5%"],
+              y: ["-1%", "1%", "-1%"],
+            }}
+            transition={{
+              duration: 25,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
           >
             <img
-              src={coupleImg}
+              src="/cover.png"
               alt="The Couple"
-              className="w-full h-full object-cover object-top"
-              style={{ filter: "sepia(20%) brightness(0.32) contrast(1.1)" }}
+              className="w-full h-full object-cover object-[center_30%] opacity-90"
+              style={{ filter: "brightness(1.0) contrast(1.05) saturate(1.1) blur(0px)" }}
             />
           </motion.div>
+          {/* Subtle Golden Shimmer Overlay */}
+          <motion.div
+            className="absolute inset-0 z-10 pointer-events-none mix-blend-overlay"
+            style={{
+              background: "linear-gradient(45deg, transparent 40%, rgba(212, 175, 55, 0.4) 50%, transparent 60%)",
+              backgroundSize: "250% 250%",
+            }}
+            animate={{ backgroundPosition: ["0% 0%", "100% 100%"] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+          />
+          {/* Dark elegant overlay on hero section */}
+          <div className="absolute inset-0 pointer-events-none z-10 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
         </div>
       </motion.div>
 
-      {/* ── VIGNETTE & gradient overlay ── */}
+      {/* Dynamic Lens Flare / Light Leak Overlays */}
+      {mounted && <LightLeak />}
+
+      {/* ── Ethereal Overlays & Vignette ── */}
       <div
-        className="absolute inset-0 pointer-events-none"
+        className="absolute inset-0 pointer-events-none z-[10]"
         style={{
           background: `
-            radial-gradient(ellipse at 50% 0%, transparent 0%, rgba(8,6,1,0.55) 80%),
             linear-gradient(to bottom,
-              rgba(8,6,1,0.15) 0%,
-              rgba(8,6,1,0.0) 25%,
-              rgba(8,6,1,0.5) 60%,
-              rgba(8,6,1,0.92) 85%,
-              rgba(8,6,1,1) 100%)
+              rgba(255, 255, 255, 0.45) 0%,
+              rgba(255, 255, 255, 0.05) 35%,
+              rgba(255, 255, 255, 0.15) 65%,
+              rgba(227, 242, 253, 0.95) 100%)
           `,
         }}
       />
 
-      {/* ── Orbiting glow rings (centred mid-frame) ── */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <OrbitRing size={280} duration={8} delay={0} opacity={0.04} />
-        <OrbitRing size={380} duration={10} delay={2} opacity={0.03} />
-        <OrbitRing size={500} duration={14} delay={1} opacity={0.02} />
+      {/* Ripple rings backdrop */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-[4]">
+        <RippleRing size={280} delay={0} />
+        <RippleRing size={450} delay={3} />
+        <OrbitRing size={320} duration={14} delay={0} opacity={0.16} />
+        <OrbitRing size={520} duration={18} delay={4} opacity={0.12} />
       </div>
 
-      {/* ── CONTENT (pinned to bottom) ── */}
+      {/* ── CONTENT LAYER ── */}
       <motion.div
         style={{ x: textX, y: textY }}
-        className="relative z-10 flex flex-col justify-end flex-1 px-7 pb-14 pt-28"
+        className="relative z-[12] flex flex-col justify-end flex-1 px-7 pb-14 pt-28"
       >
-        {/* Eyebrow */}
+        {/* Eyebrow invite tag */}
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 1 }}
           className="flex items-center gap-3 mb-7"
         >
           <motion.div
             initial={{ width: 0 }}
-            animate={{ width: 28 }}
-            transition={{ delay: 0.8, duration: 1.2, ease: "easeInOut" }}
-            style={{ height: "0.5px", background: "rgba(212,175,107,0.7)", flexShrink: 0 }}
+            animate={{ width: 32 }}
+            transition={{ delay: 0.7, duration: 1.4, ease: "easeInOut" }}
+            style={{ height: "1px", background: "rgba(33, 150, 243, 0.65)", flexShrink: 0 }}
           />
-          <span
+          <motion.span
+            initial={{ letterSpacing: "0.2em" }}
+            animate={{ letterSpacing: "0.55em" }}
+            transition={{ delay: 0.3, duration: 1.6, ease: "easeOut" }}
             style={{
               fontFamily: "'Cormorant Garamond', serif",
-              fontSize: "10px",
-              letterSpacing: "0.45em",
-              color: "rgba(212,175,107,0.75)",
+              fontSize: "11px",
+              color: "#1565C0",
               textTransform: "uppercase",
+              fontWeight: 500,
             }}
           >
             Wedding Invitation
-          </span>
+          </motion.span>
           <motion.div
             initial={{ width: 0 }}
-            animate={{ width: 28 }}
-            transition={{ delay: 0.8, duration: 1.2, ease: "easeInOut" }}
-            style={{ height: "0.5px", background: "rgba(212,175,107,0.7)", flexShrink: 0 }}
+            animate={{ width: 32 }}
+            transition={{ delay: 0.7, duration: 1.4, ease: "easeInOut" }}
+            style={{ height: "1px", background: "rgba(33, 150, 243, 0.65)", flexShrink: 0 }}
           />
         </motion.div>
 
-        {/* Names */}
+        {/* The Couple Names with gorgeous perspective 3D animations */}
         <div
           style={{
             fontFamily: "'Playfair Display', serif",
             fontWeight: 400,
-            color: "#f5ede0",
-            lineHeight: 0.9,
-            fontSize: "clamp(54px, 17vw, 96px)",
-            perspective: "600px",
+            lineHeight: 0.95,
+            fontSize: "clamp(54px, 17vw, 98px)",
+            perspective: "1000px",
+            color: "#0D47A1",
+            textShadow: "0 2px 10px rgba(255, 255, 255, 0.85)",
           }}
         >
-          <div style={{ overflow: "hidden", display: "block", paddingBottom: "0.06em" }}>
+          <div
+            style={{
+              overflow: "hidden",
+              display: "block",
+              paddingBottom: "0.08em",
+            }}
+          >
             {groomName.split("").map((c, i) => (
-              <Char key={i} char={c} index={i} baseDelay={0.6} />
+              <Char key={i} char={c} index={i} baseDelay={0.5} />
             ))}
           </div>
 
-          {/* & ampersand */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.5, filter: "blur(10px)" }}
-            animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-            transition={{ delay: 1.4, duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
+            initial={{ opacity: 0, scale: 0.4, rotate: -45, filter: "blur(12px)" }}
+            animate={{ opacity: 1, scale: 1, rotate: 0, filter: "blur(0px)" }}
+            transition={{ delay: 1.3, duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
             style={{
               fontFamily: "'Cormorant Upright', 'Cormorant Garamond', serif",
               fontStyle: "italic",
-              fontSize: "clamp(32px, 10vw, 56px)",
-              color: "rgba(212,175,107,0.85)",
+              fontSize: "clamp(34px, 10vw, 58px)",
+              color: "#42A5F5",
               display: "block",
-              padding: "0.2em 0",
+              padding: "0.15em 0",
               lineHeight: 1,
+              textShadow: "0 2px 8px rgba(255, 255, 255, 0.5)",
             }}
           >
             &
           </motion.div>
 
-          <div style={{ overflow: "hidden", display: "block", paddingTop: "0.04em" }}>
+          <div
+            style={{
+              overflow: "hidden",
+              display: "block",
+              paddingTop: "0.06em",
+            }}
+          >
             {brideName.split("").map((c, i) => (
-              <Char key={i} char={c} index={i} baseDelay={1.6} />
+              <Char key={i} char={c} index={i} baseDelay={1.4} />
             ))}
           </div>
         </div>
 
-        {/* Gold divider bar */}
+        {/* Elegant blue linear gradient divider line */}
         <motion.div
           initial={{ scaleX: 0, opacity: 0 }}
           animate={{ scaleX: 1, opacity: 1 }}
-          transition={{ delay: 2.8, duration: 1.6, ease: "easeInOut" }}
+          transition={{ delay: 2.4, duration: 1.8, ease: "easeInOut" }}
           style={{
-            height: "0.5px",
-            marginTop: "2rem",
-            marginBottom: "1.5rem",
-            background: "linear-gradient(90deg, rgba(212,175,107,0), rgba(212,175,107,0.6), rgba(212,175,107,0))",
-            transformOrigin: "left",
+            height: "1px",
+            marginTop: "2.8rem",
+            marginBottom: "1.6rem",
+            background: "linear-gradient(90deg, transparent, rgba(33, 150, 243, 0.5), transparent)",
+            transformOrigin: "center",
           }}
         />
 
-        {/* Date + tagline */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 3.2, duration: 1 }}
-        >
-          <p
+        {/* Wedding Date + Tagline */}
+        <div style={{ perspective: "800px" }}>
+          {/* Expanded Letter-spacing Date */}
+          <motion.p
+            initial={{ opacity: 0, letterSpacing: "0.2em", y: 15 }}
+            animate={{ opacity: 1, letterSpacing: "0.45em", y: 0 }}
+            transition={{ delay: 2.8, duration: 1.8, ease: [0.16, 1, 0.3, 1] }}
             style={{
               fontFamily: "'Cormorant Garamond', serif",
-              fontSize: "13px",
-              letterSpacing: "0.38em",
+              fontSize: "14px",
               textTransform: "uppercase",
-              color: "rgba(212,175,107,0.8)",
-              marginBottom: "0.55rem",
+              color: "#1565C0",
+              marginBottom: "0.7rem",
+              fontWeight: 500,
             }}
           >
             {wedding.dateLabel}
-          </p>
-          <p
+          </motion.p>
+          
+          {/* Tagline */}
+          <motion.p
+            initial={{ opacity: 0, y: 15, filter: "blur(4px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            transition={{ delay: 3.2, duration: 1.6, ease: [0.16, 1, 0.3, 1] }}
             style={{
               fontFamily: "'Cormorant Garamond', serif",
               fontStyle: "italic",
-              fontSize: "15px",
-              color: "rgba(220,205,178,0.55)",
-              letterSpacing: "0.04em",
-              maxWidth: "260px",
+              fontSize: "16px",
+              color: "rgba(21, 101, 192, 0.75)",
+              letterSpacing: "0.06em",
+              maxWidth: "300px",
+              lineHeight: 1.4,
             }}
           >
             {wedding.tagline}
-          </p>
-        </motion.div>
+          </motion.p>
+        </div>
 
-        {/* CTA pill */}
+        {/* View Invitation Luxury Button */}
         <motion.button
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 22 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 3.6, duration: 1 }}
-          whileTap={{ scale: 0.96 }}
-          whileHover={{ scale: 1.02 }}
+          transition={{ delay: 3.6, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.04, backgroundColor: "rgba(255, 255, 255, 0.9)" }}
           style={{
-            marginTop: "2rem",
+            marginTop: "2.8rem",
             alignSelf: "flex-start",
-            padding: "14px 32px",
-            border: "0.5px solid rgba(212,175,107,0.5)",
-            borderRadius: "2px",
-            background: "rgba(212,175,107,0.07)",
-            backdropFilter: "blur(8px)",
-            color: "rgba(212,175,107,0.9)",
+            padding: "16px 38px",
+            border: "1.5px solid rgba(33, 150, 243, 0.28)",
+            borderRadius: "50px",
+            background: "rgba(255, 255, 255, 0.65)",
+            backdropFilter: "blur(12px)",
+            color: "#1565C0",
             fontFamily: "'Cormorant Garamond', serif",
             fontSize: "12px",
-            letterSpacing: "0.35em",
+            letterSpacing: "0.42em",
             textTransform: "uppercase",
             cursor: "pointer",
             position: "relative",
             overflow: "hidden",
+            boxShadow: "0 12px 35px rgba(187, 222, 251, 0.45)",
+            transition: "all 0.4s ease",
           }}
         >
-          {/* Shimmer sweep on button */}
           <motion.div
             style={{
               position: "absolute",
               inset: 0,
-              background: "linear-gradient(105deg, transparent 35%, rgba(212,175,107,0.18) 50%, transparent 65%)",
+              background: "linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.85) 50%, transparent 65%)",
               backgroundSize: "200% 100%",
             }}
             animate={{ backgroundPositionX: ["-100%", "200%"] }}
-            transition={{ duration: 2.8, delay: 4.5, repeat: Infinity, repeatDelay: 3 }}
+            transition={{ duration: 3.2, delay: 5.5, repeat: Infinity, repeatDelay: 3.5 }}
           />
-          <span style={{ position: "relative" }}>View Invitation</span>
+          <span style={{ position: "relative", fontWeight: 600 }}>View Invitation</span>
         </motion.button>
       </motion.div>
 
-      {/* ── Scroll indicator ── */}
+      {/* Scroll indicator */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 4, duration: 1 }}
+        transition={{ delay: 4.2, duration: 1.2 }}
         className="absolute bottom-5 right-7 z-20 flex flex-col items-center gap-2"
       >
         <span
           style={{
             fontFamily: "'Cormorant Garamond', serif",
-            fontSize: "9px",
-            letterSpacing: "0.35em",
+            fontSize: "10px",
+            letterSpacing: "0.4em",
             textTransform: "uppercase",
-            color: "rgba(212,175,107,0.35)",
+            color: "rgba(21, 101, 192, 0.45)",
             writingMode: "vertical-rl",
           }}
         >
@@ -387,18 +632,17 @@ export const Hero = () => {
         </span>
         <motion.div
           style={{
-            width: "0.5px",
-            height: 36,
-            background: "linear-gradient(to bottom, rgba(212,175,107,0.4), rgba(212,175,107,0))",
+            width: "1px",
+            height: 42,
+            background: "linear-gradient(to bottom, rgba(33, 150, 243, 0.45), transparent)",
           }}
-          animate={{ scaleY: [1, 0.4, 1], opacity: [0.6, 0.2, 0.6] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          animate={{ scaleY: [1, 0.5, 1], opacity: [0.65, 0.25, 0.65] }}
+          transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut" }}
         />
       </motion.div>
 
-      {/* ── Google Fonts preload ── */}
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Cormorant+Upright:wght@300;400&family=Playfair+Display:wght@400;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Cormorant+Upright:wght@300;400&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
       `}</style>
     </section>
   );

@@ -1,6 +1,6 @@
 import { wedding } from "@/data/wedding";
-import { AnimatePresence, motion, useInView, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { AnimatePresence, motion, useInView } from "framer-motion";
+import { ChevronLeft, ChevronRight, X, Play, Pause } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 // ─── Palette ──────────────────────────────────────────────────────────────────
@@ -19,155 +19,6 @@ const C = {
   bluePale: "rgba(111,163,200,0.12)",
   blueGlow: "rgba(111,163,200,0.25)",
 };
-
-// ─── Tilt card wrapper ────────────────────────────────────────────────────────
-const TiltCard = ({ children, onClick, delay, aspect }: {
-  children: React.ReactNode;
-  onClick: () => void;
-  delay: number;
-  aspect: "tall" | "wide" | "square";
-}) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const mx = useMotionValue(0);
-  const my = useMotionValue(0);
-  const sx = useSpring(mx, { stiffness: 180, damping: 28 });
-  const sy = useSpring(my, { stiffness: 180, damping: 28 });
-  const rotX = useTransform(sy, [-0.5, 0.5], [4, -4]);
-  const rotY = useTransform(sx, [-0.5, 0.5], [-4, 4]);
-
-  const onMove = (e: React.MouseEvent) => {
-    const r = ref.current?.getBoundingClientRect();
-    if (!r) return;
-    mx.set((e.clientX - r.left) / r.width - 0.5);
-    my.set((e.clientY - r.top) / r.height - 0.5);
-  };
-  const onLeave = () => { mx.set(0); my.set(0); };
-
-  const aspectH = aspect === "tall" ? "280px" : aspect === "wide" ? "160px" : "210px";
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 32, scale: 0.94 }}
-      whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.9, delay, ease: [0.22, 1, 0.36, 1] }}
-      style={{ perspective: "800px", height: aspectH, cursor: "pointer" }}
-      onMouseMove={onMove}
-      onMouseLeave={onLeave}
-      onClick={onClick}
-    >
-      <motion.div
-        style={{
-          rotateX: rotX,
-          rotateY: rotY,
-          height: "100%",
-          transformStyle: "preserve-3d",
-          borderRadius: 3,
-          overflow: "hidden",
-          border: `0.5px solid ${C.border}`,
-          background: C.card,
-          boxShadow: `0 2px 18px rgba(26,42,58,0.08), 0 0 0 0px ${C.blueGlow}`,
-          transition: "box-shadow 0.3s, border-color 0.3s",
-        }}
-        whileHover={{
-          boxShadow: `0 12px 48px rgba(26,42,58,0.14), 0 0 0 1px ${C.blueGlow}`,
-        }}
-      >
-        {children}
-      </motion.div>
-    </motion.div>
-  );
-};
-
-// ─── Gallery item ─────────────────────────────────────────────────────────────
-const GalleryItem = ({ src, index, onClick, delay, aspect }: {
-  src: string; index: number; onClick: () => void; delay: number;
-  aspect: "tall" | "wide" | "square";
-}) => (
-  <TiltCard onClick={onClick} delay={delay} aspect={aspect}>
-    <div style={{ position: "relative", width: "100%", height: "100%", overflow: "hidden" }}>
-      {/* Image */}
-      <motion.img
-        src={src}
-        alt={`Memory ${index + 1}`}
-        loading="lazy"
-        style={{
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-          display: "block",
-          filter: "saturate(0.85) brightness(1.02)",
-        }}
-        whileHover={{ scale: 1.07, filter: "saturate(1.1) brightness(1.05)" }}
-        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-      />
-
-      {/* Hover overlay */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        whileHover={{ opacity: 1 }}
-        transition={{ duration: 0.35 }}
-        style={{
-          position: "absolute",
-          inset: 0,
-          background: "linear-gradient(to top, rgba(26,42,58,0.55) 0%, rgba(26,42,58,0.05) 55%, transparent 100%)",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "flex-end",
-          padding: "16px",
-        }}
-      >
-        <p style={{
-          fontFamily: "'Cormorant Garamond', serif",
-          fontSize: 13,
-          letterSpacing: "0.25em",
-          textTransform: "uppercase",
-          color: "rgba(240,248,255,0.9)",
-          margin: 0,
-        }}>
-          View
-        </p>
-        <motion.div
-          initial={{ width: 0 }}
-          whileHover={{ width: 28 }}
-          transition={{ duration: 0.5, delay: 0.05 }}
-          style={{ height: "0.5px", background: C.gold, marginTop: 6 }}
-        />
-      </motion.div>
-
-      {/* Blue shimmer on hover */}
-      <motion.div
-        initial={{ x: "-100%", opacity: 0 }}
-        whileHover={{ x: "200%", opacity: 1 }}
-        transition={{ duration: 0.9, ease: "easeInOut" }}
-        style={{
-          position: "absolute",
-          top: 0, bottom: 0,
-          width: "35%",
-          background: "linear-gradient(90deg, transparent, rgba(111,163,200,0.18), transparent)",
-          pointerEvents: "none",
-        }}
-      />
-
-      {/* Index badge */}
-      <div style={{
-        position: "absolute",
-        top: 10, right: 10,
-        fontFamily: "'Cormorant Garamond', serif",
-        fontSize: 10,
-        letterSpacing: "0.3em",
-        color: "rgba(240,248,255,0.6)",
-        background: "rgba(26,42,58,0.35)",
-        backdropFilter: "blur(4px)",
-        padding: "3px 7px",
-        borderRadius: 1,
-      }}>
-        {String(index + 1).padStart(2, "0")}
-      </div>
-    </div>
-  </TiltCard>
-);
 
 // ─── Lightbox ─────────────────────────────────────────────────────────────────
 const Lightbox = ({ index, onClose, onPrev, onNext, total }: {
@@ -343,7 +194,7 @@ const Lightbox = ({ index, onClose, onPrev, onNext, total }: {
 
 // ─── Section heading ──────────────────────────────────────────────────────────
 const Heading = ({ inView }: { inView: boolean }) => (
-  <div style={{ textAlign: "center", marginBottom: 56 }}>
+  <div style={{ textAlign: "center", marginBottom: 48 }}>
     {/* Eyebrow */}
     <motion.div
       initial={{ opacity: 0 }}
@@ -426,6 +277,8 @@ const Heading = ({ inView }: { inView: boolean }) => (
 // ─── Main ─────────────────────────────────────────────────────────────────────
 export const Gallery = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [currentSheet, setCurrentSheet] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(true);
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-60px" });
 
@@ -447,22 +300,168 @@ export const Gallery = () => {
     return () => window.removeEventListener("keydown", handler);
   }, [openIndex]);
 
-  // Build grid pattern: tall / wide / square alternating
-  const aspects: Array<"tall" | "wide" | "square"> = wedding.gallery.map((_, i) =>
-    i % 5 === 0 ? "tall" : i % 5 === 3 ? "wide" : "square"
+  // Responsive dynamic page bounds
+  const pageWidth = "min(340px, 42vw)";
+  const pageHeight = "min(450px, 56vw)";
+
+  // Sheets Definition
+  const sheets: { front: JSX.Element; back: JSX.Element }[] = [];
+
+  // Sheet 0: Cover / Welcome
+  sheets.push({
+    front: (
+      <div 
+        onClick={() => { setIsPlaying(false); setCurrentSheet(1); }}
+        className="w-full h-full flex flex-col items-center justify-center p-6 text-center cursor-pointer select-none relative" 
+        style={{
+          background: "linear-gradient(135deg, #0d2847 0%, #061526 100%)",
+          border: "4px double rgba(180, 148, 90, 0.4)",
+          boxShadow: "inset 0 0 30px rgba(0,0,0,0.6)",
+          borderRadius: "0 4px 4px 0",
+        }}
+      >
+        <div className="border border-luxury-gold/20 p-4 sm:p-6 flex flex-col items-center justify-center h-full w-full relative">
+          <div className="absolute top-2 left-2 w-3 h-3 border-t border-l border-luxury-gold/30" />
+          <div className="absolute top-2 right-2 w-3 h-3 border-t border-r border-luxury-gold/30" />
+          <div className="absolute bottom-2 left-2 w-3 h-3 border-b border-l border-luxury-gold/30" />
+          <div className="absolute bottom-2 right-2 w-3 h-3 border-b border-r border-luxury-gold/30" />
+          
+          <span style={{ fontSize: "clamp(7px, 2vw, 10px)" }} className="font-inter uppercase tracking-[0.4em] text-luxury-gold/60 mb-6">Our Wedding Album</span>
+          <h1 style={{ fontSize: "clamp(18px, 5vw, 26px)" }} className="font-display text-luxury-gold mb-2 tracking-wide leading-tight">Rohith<br/><span style={{ fontSize: "clamp(14px, 4vw, 20px)" }} className="text-luxury-gold/80">&</span><br/>Anjana</h1>
+          <div className="h-[1px] w-12 bg-luxury-gold/30 my-4" />
+          <p style={{ fontSize: "clamp(7px, 2vw, 9px)" }} className="font-inter uppercase tracking-[0.3em] text-luxury-gold/60">07 . 06 . 2026</p>
+          <span style={{ fontSize: "clamp(6px, 1.8vw, 8px)" }} className="font-inter italic text-luxury-gold/40 mt-8">Cherished Moments</span>
+        </div>
+        <div className="absolute bottom-2 right-3 font-inter text-[8px] tracking-wider text-luxury-gold/30 animate-pulse">Open ➔</div>
+      </div>
+    ),
+    back: (
+      <div 
+        onClick={() => { setIsPlaying(false); setCurrentSheet(0); }}
+        className="w-full h-full flex flex-col items-center justify-center p-6 sm:p-10 text-center cursor-pointer select-none" 
+        style={{
+          background: "#fcfaf2",
+          borderRight: "1px solid rgba(0,0,0,0.05)",
+          boxShadow: "inset 10px 0 20px rgba(0,0,0,0.05)",
+        }}
+      >
+        <div className="max-w-[200px] flex flex-col items-center">
+          <span style={{ fontSize: "clamp(12px, 3.5vw, 16px)" }} className="font-display text-luxury-gold mb-4 italic">Welcome</span>
+          <p style={{ fontSize: "clamp(9px, 2.5vw, 11px)" }} className="font-inter text-luxury-gold/70 leading-relaxed italic">
+            "From the first glance to the promise of forever. This album holds the pieces of our hearts, the laughter we shared, and the memories we cherish as we step into our new beginning together."
+          </p>
+          <div className="h-[1px] w-8 bg-luxury-gold/20 mt-6" />
+        </div>
+      </div>
+    )
+  });
+
+  const endCover = (sheetIndex: number, isBack: boolean) => (
+    <div 
+      onClick={() => { setIsPlaying(false); setCurrentSheet(isBack ? sheetIndex : sheetIndex + 1); }}
+      className="w-full h-full flex flex-col items-center justify-center p-6 text-center cursor-pointer select-none relative" 
+      style={{
+        background: "linear-gradient(135deg, #0d2847 0%, #061526 100%)",
+        border: "4px double rgba(180, 148, 90, 0.4)",
+        boxShadow: "inset 0 0 30px rgba(0,0,0,0.6)",
+        borderRadius: isBack ? "4px 0 0 4px" : "0 4px 4px 0",
+      }}
+    >
+      <div className="border border-luxury-gold/20 p-4 sm:p-6 flex flex-col items-center justify-center h-full w-full relative">
+        <div className="absolute top-2 left-2 w-3 h-3 border-t border-l border-luxury-gold/30" />
+        <div className="absolute top-2 right-2 w-3 h-3 border-t border-r border-luxury-gold/30" />
+        <div className="absolute bottom-2 left-2 w-3 h-3 border-b border-l border-luxury-gold/30" />
+        <div className="absolute bottom-2 right-2 w-3 h-3 border-b border-r border-luxury-gold/30" />
+        
+        <span style={{ fontSize: "clamp(11px, 3.5vw, 15px)" }} className="font-display text-luxury-gold mb-2">The End</span>
+        <p style={{ fontSize: "clamp(6px, 1.8vw, 8px)" }} className="font-inter uppercase tracking-[0.2em] text-luxury-gold/60">of a beautiful beginning</p>
+        <div className="h-[1px] w-8 bg-luxury-gold/25 my-4" />
+        <p style={{ fontSize: "clamp(6px, 1.8vw, 8px)" }} className="font-inter text-luxury-gold/40">Thank You for Being Part of Our Story</p>
+      </div>
+      {isBack && <div className="absolute bottom-2 left-3 font-inter text-[8px] tracking-wider text-luxury-gold/30">➔ Restart</div>}
+    </div>
   );
+
+  const getPhotoPage = (imgIndex: number, isBack: boolean, sheetIndex: number) => {
+    if (imgIndex >= wedding.gallery.length) return endCover(sheetIndex, isBack);
+    return (
+      <div 
+        onClick={() => { setIsPlaying(false); setCurrentSheet(isBack ? sheetIndex : sheetIndex + 1); }}
+        className="w-full h-full flex flex-col p-3 sm:p-5 cursor-pointer select-none" 
+        style={{
+          background: "#fcfaf2",
+          boxShadow: isBack ? "inset 10px 0 20px rgba(0,0,0,0.03)" : "inset -10px 0 20px rgba(0,0,0,0.03)",
+        }}
+      >
+        <div className="flex-1 bg-white p-2 border border-black/5 shadow-md flex flex-col">
+          <div 
+            onClick={(e) => { e.stopPropagation(); setOpenIndex(imgIndex); }}
+            className="flex-1 overflow-hidden relative bg-slate-100 group"
+          >
+            <img src={wedding.gallery[imgIndex]} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt={`Memory ${imgIndex + 1}`} />
+            <div className="absolute inset-0 bg-black/15 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+              <span className="text-[8px] font-inter uppercase tracking-widest text-white bg-black/45 px-2.5 py-1 rounded-full backdrop-blur-sm">View</span>
+            </div>
+          </div>
+          <div className="pt-2.5 text-center">
+            <p style={{ fontSize: "clamp(10px, 3vw, 13px)" }} className="font-display text-luxury-gold">Beautiful Memory</p>
+            <p style={{ fontSize: "clamp(6px, 1.8vw, 8px)" }} className="font-inter uppercase tracking-widest text-slate-400 mt-0.5">Cherished Moment</p>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const numPhotoSheets = Math.ceil(wedding.gallery.length / 2);
+  for (let i = 0; i < numPhotoSheets; i++) {
+    const sheetIndex = i + 1;
+    sheets.push({
+      front: getPhotoPage(i * 2, false, sheetIndex),
+      back: getPhotoPage(i * 2 + 1, true, sheetIndex)
+    });
+  }
+
+  if (wedding.gallery.length % 2 === 0) {
+    sheets.push({
+      front: endCover(sheets.length, false),
+      back: (
+        <div 
+          onClick={() => { setIsPlaying(false); setCurrentSheet(sheets.length - 1); }}
+          className="w-full h-full flex flex-col items-center justify-center p-6 text-center cursor-pointer select-none" 
+          style={{
+            background: "#fcfaf2",
+            borderRight: "1px solid rgba(0,0,0,0.05)",
+            boxShadow: "inset 10px 0 20px rgba(0,0,0,0.05)",
+          }}
+        >
+          <div className="opacity-10">
+            <div className="w-8 h-8 border-2 border-luxury-gold transform rotate-45 mb-2 mx-auto" />
+          </div>
+        </div>
+      )
+    });
+  }
+
+  // Auto page-flip logic loop
+  useEffect(() => {
+    if (!isPlaying) return;
+    const interval = setInterval(() => {
+      setCurrentSheet((prev) => (prev + 1) % (sheets.length + 1));
+    }, 4500);
+    return () => clearInterval(interval);
+  }, [isPlaying, sheets.length]);
 
   return (
     <section
       ref={sectionRef}
       style={{
         background: C.bg,
-        padding: "88px 0 100px",
+        padding: "80px 0 90px",
         position: "relative",
         overflow: "hidden",
       }}
     >
-      {/* Background pattern */}
+      {/* Background patterns */}
       <div style={{
         position: "absolute",
         inset: 0,
@@ -489,31 +488,160 @@ export const Gallery = () => {
         }}
       />
 
-      <div style={{ maxWidth: 380, margin: "0 auto", padding: "0 16px" }}>
+      <div className="w-full max-w-[800px] mx-auto px-4 flex flex-col items-center">
         <Heading inView={isInView} />
 
-        {/* ── Mosaic grid ── */}
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: 10,
-        }}>
-          {wedding.gallery.map((src, i) => (
+        {/* ─── 3D Photo Album ─── */}
+        <div 
+          className="relative flex flex-col items-center justify-center album-book-container mt-4"
+          style={{
+            width: "100%",
+            maxWidth: "680px",
+            perspective: "2000px",
+          }}
+        >
+          {/* Depth Drop Shadow */}
+          <div
+            style={{
+              position: "absolute",
+              bottom: "-15px",
+              width: `calc(1.8 * ${pageWidth})`,
+              height: "20px",
+              background: "rgba(6, 21, 38, 0.15)",
+              filter: "blur(14px)",
+              borderRadius: "50%",
+              transform: "rotateX(80deg)",
+              zIndex: 1,
+            }}
+          />
+
+          {/* Book Linen Binder Cover Casing */}
+          <div
+            className="relative shadow-2xl transition-all duration-700 hover:shadow-[0_35px_80px_rgba(6,21,38,0.3)] select-none"
+            style={{
+              width: `calc(2 * ${pageWidth} + 16px)`,
+              height: `calc(${pageHeight} + 16px)`,
+              background: "linear-gradient(135deg, #091a2e 0%, #030a12 100%)",
+              borderRadius: "8px",
+              padding: "8px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              boxShadow: "0 25px 60px rgba(6,21,38,0.22), inset 0 0 15px rgba(0,0,0,0.6)",
+              zIndex: 2,
+            }}
+          >
+            {/* Spine (Center Binder Joint) */}
             <div
-              key={i}
               style={{
-                gridColumn: aspects[i] === "wide" ? "1 / -1" : "auto",
+                position: "absolute",
+                top: 0,
+                bottom: 0,
+                left: "50%",
+                transform: "translateX(-50%)",
+                width: "4px",
+                background: "linear-gradient(90deg, #05101c, #162435 50%, #05101c)",
+                boxShadow: "0 0 8px rgba(0,0,0,0.5)",
+                zIndex: 15,
+              }}
+            />
+
+            {/* Inner Page Spread Container */}
+            <div
+              className="relative overflow-hidden w-full h-full bg-[#f4ece1] rounded-[4px]"
+              style={{
+                transformStyle: "preserve-3d",
               }}
             >
-              <GalleryItem
-                src={src}
-                index={i}
-                onClick={() => setOpenIndex(i)}
-                delay={0.05 * (i % 8)}
-                aspect={aspects[i]}
-              />
+              {/* Spine Gutter Shadows */}
+              <div className="album-gutter-shadow-left" style={{ left: "calc(50% - 15px)", right: "auto" }} />
+              <div className="album-gutter-shadow-right" style={{ left: "50%" }} />
+
+              {/* Album Sheets Render */}
+              {sheets.map((sheet, i) => {
+                const isFlipped = i < currentSheet;
+                const rotateY = isFlipped ? -180 : 0;
+                const zIndex = isFlipped ? i : sheets.length - i;
+                
+                return (
+                  <motion.div
+                    key={i}
+                    className="album-sheet"
+                    animate={{ rotateY }}
+                    transition={{ 
+                      duration: 1.3, 
+                      ease: [0.25, 1, 0.5, 1],
+                      delay: Math.abs(currentSheet - 1 - i) * 0.05 
+                    }}
+                    style={{
+                      zIndex,
+                      pointerEvents: (i === currentSheet || i === currentSheet - 1) ? "auto" : "none",
+                    }}
+                  >
+                    {/* Front Side of Page Sheet */}
+                    <div className="album-page-front">
+                      {sheet.front}
+                    </div>
+
+                    {/* Back Side of Page Sheet */}
+                    <div className="album-page-back">
+                      {sheet.back}
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
-          ))}
+          </div>
+        </div>
+
+        {/* ─── Playback Control Panel ─── */}
+        <div className="flex items-center justify-center gap-6 mt-12 z-10 relative">
+          {/* Previous Page Button */}
+          <button
+            onClick={() => {
+              setIsPlaying(false);
+              if (currentSheet > 0) setCurrentSheet((p) => p - 1);
+            }}
+            disabled={currentSheet === 0}
+            className="p-3 border border-luxury-gold/30 text-luxury-gold rounded-full transition-all duration-300 hover:bg-luxury-gold/10 disabled:opacity-20 disabled:hover:bg-transparent"
+            title="Previous Page"
+          >
+            <ChevronLeft size={18} />
+          </button>
+
+          {/* Autoplay Play/Pause Toggle */}
+          <button
+            onClick={() => setIsPlaying(!isPlaying)}
+            className="px-6 py-2.5 border border-luxury-gold text-[9px] uppercase tracking-widest text-luxury-gold rounded-full transition-all duration-300 hover:bg-luxury-gold hover:text-white flex items-center gap-2 shadow-md"
+            style={{ background: isPlaying ? "rgba(180, 148, 90, 0.08)" : "transparent" }}
+          >
+            {isPlaying ? (
+              <>
+                <Pause size={10} className="fill-luxury-gold" />
+                <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse ml-0.5" />
+                Auto Playing
+              </>
+            ) : (
+              <>
+                <Play size={10} className="fill-luxury-gold" />
+                <span className="w-1.5 h-1.5 rounded-full bg-slate-400 ml-0.5" />
+                Auto Flipping Paused
+              </>
+            )}
+          </button>
+
+          {/* Next Page Button */}
+          <button
+            onClick={() => {
+              setIsPlaying(false);
+              if (currentSheet < sheets.length) setCurrentSheet((p) => p + 1);
+            }}
+            disabled={currentSheet === sheets.length}
+            className="p-3 border border-luxury-gold/30 text-luxury-gold rounded-full transition-all duration-300 hover:bg-luxury-gold/10 disabled:opacity-20 disabled:hover:bg-transparent"
+            title="Next Page"
+          >
+            <ChevronRight size={18} />
+          </button>
         </div>
 
         {/* Bottom ornament */}
@@ -533,7 +661,7 @@ export const Gallery = () => {
         </motion.div>
       </div>
 
-      {/* Lightbox */}
+      {/* Lightbox full enlarger overlay */}
       <AnimatePresence>
         {openIndex !== null && (
           <Lightbox
@@ -548,6 +676,59 @@ export const Gallery = () => {
 
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap');
+        
+        .album-book-container {
+          perspective: 2000px;
+        }
+        
+        .album-sheet {
+          transform-style: preserve-3d;
+          position: absolute;
+          top: 0;
+          right: 0;
+          width: 50%;
+          height: 100%;
+          transform-origin: left center;
+        }
+        
+        .album-page-front,
+        .album-page-back {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+          border-radius: 0 4px 4px 0;
+          overflow: hidden;
+        }
+        
+        .album-page-back {
+          transform: rotateY(180deg);
+          border-radius: 4px 0 0 4px;
+        }
+
+        .album-gutter-shadow-left {
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          right: 0;
+          width: 15px;
+          background: linear-gradient(90deg, transparent, rgba(0,0,0,0.14));
+          pointer-events: none;
+          z-index: 20;
+        }
+        
+        .album-gutter-shadow-right {
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          left: 0;
+          width: 15px;
+          background: linear-gradient(90deg, rgba(0,0,0,0.14), transparent);
+          pointer-events: none;
+          z-index: 20;
+        }
       `}</style>
     </section>
   );
