@@ -1,3 +1,4 @@
+import coupleImg from "@/assets/optimized/photo_2026-05-17_16-05-26.jpg";
 import { wedding } from "@/data/wedding";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
@@ -172,10 +173,10 @@ const LightLeak = () => (
 const ShimmerLine = ({ delay, y }: { delay: number; y: string }) => (
   <motion.div
     className="absolute left-0 right-0 pointer-events-none z-[9]"
-    style={{ 
-      top: y, 
-      height: "0.5px", 
-      background: "linear-gradient(90deg, transparent, rgba(187, 222, 251, 0.2), rgba(255, 255, 255, 0.75), rgba(187, 222, 251, 0.2), transparent)" 
+    style={{
+      top: y,
+      height: "0.5px",
+      background: "linear-gradient(90deg, transparent, rgba(187, 222, 251, 0.2), rgba(255, 255, 255, 0.75), rgba(187, 222, 251, 0.2), transparent)"
     }}
     animate={{ opacity: [0, 1, 0], scaleX: [0.4, 1.1, 0.4] }}
     transition={{ duration: 7, delay, repeat: Infinity, ease: "easeInOut" }}
@@ -362,7 +363,7 @@ export const Hero = () => {
         style={{ x: imgX, y: imgY }}
         className="absolute inset-0 z-[2]"
       >
-        <div className="absolute inset-0 overflow-hidden bg-black">
+        <div className="absolute inset-0 overflow-hidden">
           <motion.div
             className="w-full h-full"
             animate={{
@@ -377,24 +378,12 @@ export const Hero = () => {
             }}
           >
             <img
-              src="/cover.png"
+              src={coupleImg}
               alt="The Couple"
-              className="w-full h-full object-cover object-[center_30%] opacity-90"
-              style={{ filter: "brightness(1.0) contrast(1.05) saturate(1.1) blur(0px)" }}
+              className="w-full h-full object-cover object-[center_30%]"
+              style={{ filter: "brightness(1.08) contrast(1.03) saturate(0.95) blur(0.2px)" }}
             />
           </motion.div>
-          {/* Subtle Golden Shimmer Overlay */}
-          <motion.div
-            className="absolute inset-0 z-10 pointer-events-none mix-blend-overlay"
-            style={{
-              background: "linear-gradient(45deg, transparent 40%, rgba(212, 175, 55, 0.4) 50%, transparent 60%)",
-              backgroundSize: "250% 250%",
-            }}
-            animate={{ backgroundPosition: ["0% 0%", "100% 100%"] }}
-            transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
-          />
-          {/* Dark elegant overlay on hero section */}
-          <div className="absolute inset-0 pointer-events-none z-10 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
         </div>
       </motion.div>
 
@@ -550,7 +539,7 @@ export const Hero = () => {
           >
             {wedding.dateLabel}
           </motion.p>
-          
+
           {/* Tagline */}
           <motion.p
             initial={{ opacity: 0, y: 15, filter: "blur(4px)" }}
