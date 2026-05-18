@@ -370,12 +370,12 @@ export const Hero = () => {
       />
 
       {/* Ripple rings backdrop */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-[4]">
+      {/* <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-[4]">
         <RippleRing size={280} delay={0} />
         <RippleRing size={450} delay={3} />
         <OrbitRing size={320} duration={14} delay={0} opacity={0.16} />
         <OrbitRing size={520} duration={18} delay={4} opacity={0.12} />
-      </div>
+      </div> */}
 
       {/* ── CONTENT LAYER ── */}
       <motion.div
