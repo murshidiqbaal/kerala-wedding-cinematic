@@ -333,6 +333,11 @@ export const Hero = () => {
         <div className="absolute inset-0 overflow-hidden">
           <motion.div
             className="w-full h-full"
+            style={{
+              willChange: "transform",
+              transform: "translateZ(0)",
+              backfaceVisibility: "hidden",
+            }}
             animate={{
               scale: [1.02, 1.08, 1.02],
             }}
@@ -346,7 +351,12 @@ export const Hero = () => {
               src={coupleImg}
               alt="The Couple"
               className="w-full h-full object-cover object-[center_30%]"
-              style={{ filter: "brightness(1.08) contrast(1.03) saturate(0.95) blur(0.2px)" }}
+              style={{
+                filter: "brightness(1.08) contrast(1.03) saturate(0.95)",
+                willChange: "transform",
+                transform: "translate3d(0, 0, 0)",
+                backfaceVisibility: "hidden",
+              }}
             />
           </motion.div>
         </div>

@@ -21,6 +21,12 @@ interface AdminDashboardProps {
 
 export const AdminDashboard = ({ token, onLogout }: AdminDashboardProps) => {
   const [activeTab, setActiveTab] = useState<"overview" | "upload" | "albums" | "qrs" | "settings">("overview");
+  const [accessToken, setAccessToken] = useState(token);
+  const [isAuthLoading, setIsAuthLoading] = useState(false);
+
+  useEffect(() => {
+    setAccessToken(token);
+  }, [token]);
   
   // Google Credentials configuration state
   const [clientId, setClientId] = useState(() => localStorage.getItem("gdrive_client_id") || "");
@@ -83,18 +89,22 @@ export const AdminDashboard = ({ token, onLogout }: AdminDashboardProps) => {
 
   // Sync / Initialize Google Drive structure automatically on mount if connected
   useEffect(() => {
-    if (token && token !== "temp_token_unconfigured") {
-      initializeGoogleDrive();
-    } else if (token === "temp_token_unconfigured") {
+    if (accessToken && accessToken !== "temp_token_unconfigured") {
+      initializeGoogleDrive(accessToken);
+    } else {
       setDriveConnected(false);
-      toast.warning("Google Drive client credentials unconfigured. Operating in Demo/Setup mode.");
     }
-  }, [token]);
+  }, [accessToken]);
 
-  const initializeGoogleDrive = async () => {
+  const initializeGoogleDrive = async (activeToken?: string) => {
+    const useToken = activeToken || accessToken;
+    if (!useToken || useToken === "temp_token_unconfigured") {
+      setDriveConnected(false);
+      return;
+    }
     setIsInitializingDrive(true);
     try {
-      const syncedFolders = await setupDriveStructure(token);
+      const syncedFolders = await setupDriveStructure(useToken);
       setFolders(syncedFolders);
       localStorage.setItem("gdrive_synced_folders", JSON.stringify(syncedFolders));
       
@@ -112,6 +122,56 @@ export const AdminDashboard = ({ token, onLogout }: AdminDashboardProps) => {
       toast.error("Failed to map Google Drive structure. Check client ID or OAuth consent.");
     } finally {
       setIsInitializingDrive(false);
+    }
+  };
+
+  const handleGoogleConnect = () => {
+    setIsAuthLoading(true);
+
+    const activeClientId = clientId.trim() || localStorage.getItem("gdrive_client_id");
+    
+    if (!activeClientId) {
+      toast.warning("Google Client ID is not configured yet. Please configure it in settings below first.");
+      setIsAuthLoading(false);
+      return;
+    }
+
+    try {
+      // @ts-ignore
+      if (typeof window.google === "undefined" || !window.google.accounts) {
+        toast.error("Google API client not loaded yet. Please wait a second and retry.");
+        setIsAuthLoading(false);
+        return;
+      }
+
+      // @ts-ignore
+      const tokenClient = window.google.accounts.oauth2.initTokenClient({
+        client_id: activeClientId,
+        scope: "https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.metadata.readonly",
+        callback: (tokenResponse: any) => {
+          setIsAuthLoading(false);
+          if (tokenResponse.error) {
+            toast.error(`Authentication failed: ${tokenResponse.error}`);
+            return;
+          }
+          
+          if (tokenResponse.access_token) {
+            localStorage.setItem("gdrive_access_token", tokenResponse.access_token);
+            const expiryTime = Date.now() + 3600 * 1000;
+            localStorage.setItem("gdrive_token_expiry", expiryTime.toString());
+            
+            setAccessToken(tokenResponse.access_token);
+            toast.success("Google Drive connected successfully!");
+            playSound("success");
+          }
+        },
+      });
+
+      tokenClient.requestAccessToken({ prompt: "consent" });
+    } catch (err: any) {
+      console.error(err);
+      toast.error("Error launching Google Auth popup.");
+      setIsAuthLoading(false);
     }
   };
 
@@ -468,6 +528,33 @@ export const AdminDashboard = ({ token, onLogout }: AdminDashboardProps) => {
 
         {/* Dynamic Inner views */}
         <div className="flex-1 overflow-y-auto p-6 md:p-8">
+          {/* Connection Status Banner Warning */}
+          {!driveConnected && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-8 rounded-2xl border border-amber-500/20 bg-amber-500/[0.03] p-5 shadow-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-4 backdrop-blur-sm"
+            >
+              <div className="flex gap-3 items-start md:items-center">
+                <div className="h-10 w-10 shrink-0 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+                  <AlertCircle className="h-5 w-5 animate-pulse" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-serif font-semibold text-amber-100">Google Drive Connection Offline</h4>
+                  <p className="text-[11px] text-stone-400 mt-1 leading-relaxed">
+                    Guest photo streaming is currently using fallback demo albums. Connect your Google account in <strong>API Settings</strong> to activate live photo synchronization!
+                  </p>
+                </div>
+              </div>
+              <Button
+                onClick={() => setActiveTab("settings")}
+                size="sm"
+                className="bg-amber-500 hover:bg-amber-600 text-stone-950 font-semibold shrink-0 cursor-pointer text-xs"
+              >
+                Go to Settings
+              </Button>
+            </motion.div>
+          )}
           
           {/* TAB 1: OVERVIEW */}
           {activeTab === "overview" && (
@@ -500,7 +587,7 @@ export const AdminDashboard = ({ token, onLogout }: AdminDashboardProps) => {
                     </Button>
                     <Button
                       variant="outline"
-                      onClick={initializeGoogleDrive}
+                      onClick={() => initializeGoogleDrive()}
                       className="border-stone-800 text-stone-300 hover:bg-stone-900"
                     >
                       Sync drive schema
@@ -923,6 +1010,41 @@ export const AdminDashboard = ({ token, onLogout }: AdminDashboardProps) => {
               <div>
                 <h2 className="text-xl font-serif text-amber-100">Google Cloud Console Integration</h2>
                 <p className="text-xs text-stone-500 mt-1">Configure your Client ID and API Key to activate live file writing capabilities.</p>
+              </div>
+
+              {/* Google Connection Section */}
+              <div className="rounded-xl border border-stone-850 p-5 bg-[#0F1216]/50 space-y-4">
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-amber-100 flex items-center gap-2">
+                  <Database className="h-4 w-4 text-amber-500" /> Connection Status
+                </h3>
+                
+                <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 p-4 rounded-xl bg-black/45 border border-stone-900">
+                  <div className="space-y-1">
+                    <span className="text-[10px] text-stone-500 font-semibold uppercase">Status</span>
+                    {driveConnected ? (
+                      <p className="text-xs text-emerald-400 font-medium flex items-center gap-1.5">
+                        <CheckCircle2 className="h-4 w-4" /> Google Drive Connected (Live)
+                      </p>
+                    ) : (
+                      <p className="text-xs text-stone-400 font-medium flex items-center gap-1.5">
+                        <AlertCircle className="h-4 w-4 text-amber-500 animate-pulse" /> Google Drive Offline (Demo Mode)
+                      </p>
+                    )}
+                  </div>
+
+                  <Button
+                    type="button"
+                    onClick={handleGoogleConnect}
+                    disabled={isAuthLoading}
+                    className={`h-10 text-xs px-5 font-semibold transition-all border shadow-md cursor-pointer ${
+                      driveConnected 
+                        ? "bg-stone-900 border-stone-850 hover:bg-stone-800 text-stone-300"
+                        : "bg-white hover:bg-stone-100 text-stone-900 border-stone-200"
+                    }`}
+                  >
+                    {isAuthLoading ? "Connecting..." : driveConnected ? "Reconnect Google Storage" : "Connect Google Drive"}
+                  </Button>
+                </div>
               </div>
 
               <form onSubmit={handleSaveSettings} className="space-y-5">
